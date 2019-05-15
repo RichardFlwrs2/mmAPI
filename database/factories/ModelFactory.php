@@ -6,6 +6,8 @@ use App\Product;
 use App\Record;
 use App\Role;
 use App\User;
+use App\Client;
+use App\Contact;
 use Faker\Generator as Faker;
 
 /*
@@ -36,6 +38,35 @@ $factory->define(User::class, function (Faker $faker) {
         ]),
     ];
 });
+
+
+$factory->define(Client::class, function (Faker $faker) {
+
+    return [
+        'name' => $faker->name,
+        'created_by' => 1,
+        'phone' => $faker->numerify('##########'),
+        'address' => $faker->address,
+        'ciudad' => $faker->city,
+        'estado' => $faker->state,
+        'pais' => $faker->country,
+        'codigo_postal' => $faker->postcode,
+        'rfc' => strtoupper( $faker->shuffle(  $faker->bothify( '????????#####' ))),
+    ];
+});
+
+$factory->define(Contact::class, function (Faker $faker) {
+
+    return [
+        'name' => $faker->name,
+        'client_id' => Client::all()->random()->id,
+        'area' => $faker->word,
+        'puesto' => $faker->word,
+        'email' => $faker->unique()->safeEmail,
+        'phone' => $faker->numerify('##########'),
+    ];
+});
+
 
 $factory->define(Order::class, function (Faker $faker) {
 

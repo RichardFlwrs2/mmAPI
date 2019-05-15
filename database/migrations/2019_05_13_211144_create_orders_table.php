@@ -27,6 +27,7 @@ class CreateOrdersTable extends Migration
 
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('client_id')->references('id')->on('clients');
         });
     }
 

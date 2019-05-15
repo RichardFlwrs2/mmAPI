@@ -4,6 +4,8 @@ use App\User;
 use App\Order;
 use App\Record;
 use App\Product;
+use App\Client;
+use App\Contact;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -19,11 +21,14 @@ class DatabaseSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
         User::truncate();
+        Client::truncate();
         Order::truncate();
         Record::truncate();
         Product::truncate();
 
         $cantidadUsuarios = 3;
+        $cantidadClientes = 3;
+        $cantidadContactos = 9;
         $cantidadOrdenes = 6;
         $cantidadRecords = 20;
         $cantidadProductos = 60;
@@ -40,6 +45,8 @@ class DatabaseSeeder extends Seeder
         $super_admin->save();
 
         factory(User::class, $cantidadUsuarios)->create();
+        factory(Client::class, $cantidadClientes)->create();
+        factory(Contact::class, $cantidadContactos)->create();
         factory(Order::class, $cantidadOrdenes)->create();
         factory(Record::class, $cantidadRecords)->create();
         factory(Product::class, $cantidadProductos)->create();
