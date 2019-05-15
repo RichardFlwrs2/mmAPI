@@ -24,3 +24,8 @@ Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]
 // * - Orders
 // -------------------------------------------------------------------------------
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
+
+// -------------------------------------------------------------------------------
+// * - Products
+// -------------------------------------------------------------------------------
+Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']]);

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\User;
+use App\Status;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -30,5 +31,10 @@ class Order extends Model
     public function userAssigned()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
     }
 }

@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Order;
+namespace App\Http\Controllers\Product;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\ApiController;
-use App\Order;
+use App\Http\Controllers\Controller;
 
-class OrderController extends ApiController
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +14,7 @@ class OrderController extends ApiController
      */
     public function index()
     {
-        $orders = Order::all();
-
-        return $this->showAll($orders);
+        //
     }
 
     /**
@@ -37,9 +34,9 @@ class OrderController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show($id)
     {
-        return $this->showOne($order);
+        //
     }
 
 

@@ -4,6 +4,7 @@
 use App\User;
 use App\Role;
 use App\Order;
+use App\Record;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
@@ -46,8 +47,19 @@ $factory->define(Order::class, function (Faker $faker) {
         'status_id' => $faker->randomElement([1,2,3,4,5]),
         'client_id' => $faker->randomElement([1,2,3]),
         'folio' => str_random(5),
-        'numero_orden'=> $faker->numberBetween(1,999999999),
+        'numero_orden'=> $faker->unique()->numberBetween(1,999999999),
         'monto_total'=> $faker->numberBetween(1,999999999),
+    ];
+});
+
+
+$factory->define(Record::class, function (Faker $faker) {
+
+    return [
+        'order_id' => Order::all()->random()->id,
+        'numero_cotizacion' => $faker->unique()->numberBetween(1,999999999),
+        'monto_total' => $faker->numberBetween(1,999999999),
+        'temporal' => '0',
     ];
 });
 
