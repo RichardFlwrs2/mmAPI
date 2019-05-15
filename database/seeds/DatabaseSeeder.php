@@ -3,6 +3,7 @@
 use App\User;
 use App\Order;
 use App\Record;
+use App\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -19,10 +20,13 @@ class DatabaseSeeder extends Seeder
 
         User::truncate();
         Order::truncate();
+        Record::truncate();
+        Product::truncate();
 
         $cantidadUsuarios = 3;
         $cantidadOrdenes = 6;
         $cantidadRecords = 20;
+        $cantidadProductos = 60;
 
 
         $super_admin = new User;
@@ -38,5 +42,6 @@ class DatabaseSeeder extends Seeder
         factory(User::class, $cantidadUsuarios)->create();
         factory(Order::class, $cantidadOrdenes)->create();
         factory(Record::class, $cantidadRecords)->create();
+        factory(Product::class, $cantidadProductos)->create();
     }
 }

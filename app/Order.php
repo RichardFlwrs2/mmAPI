@@ -4,6 +4,7 @@ namespace App;
 
 use App\User;
 use App\Status;
+use App\Record;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -36,5 +37,10 @@ class Order extends Model
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function records()
+    {
+        return $this->hasMany(Record::class);
     }
 }

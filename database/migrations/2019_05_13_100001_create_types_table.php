@@ -20,7 +20,7 @@ class CreateTypesTable extends Migration
         });
 
         // ---------------------------------
-        // - Tipo de Producto
+        // - Tipo de Producto :: ( condition_id )
         // ---------------------------------
         DB::table('types')->insert([
             ['name' => 'usado', 'description' => 'Producto usado'],
@@ -29,7 +29,7 @@ class CreateTypesTable extends Migration
         ]);
 
         // ---------------------------------
-        // - Tipo de Req
+        // - Tipo de Req :: ( type_id )
         // ---------------------------------
 
         DB::table('types')->insert([
