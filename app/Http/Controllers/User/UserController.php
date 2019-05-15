@@ -15,20 +15,11 @@ class UserController extends ApiController
      */
     public function index()
     {
-        $usuarios = User::all();
+        $usuarios = User::with('role')->get();
 
         return $this->showAll($usuarios);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -49,6 +40,9 @@ class UserController extends ApiController
 
         $campos = $request->all();
         $campos['password'] = bcrypt($request->password);
+        $campos['verified'] = User::USUARIO_NO_VERIFICADO;
+        $campos['verification_token'] = User::generarVerificationToken();
+        $campos['admin'] = User::USUARIO_REGULAR;
 
         $usuario = User::create($campos);
 
