@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Order;
+use App\Product;
 use Illuminate\Database\Eloquent\Model;
 
 class Record extends Model
@@ -10,11 +12,11 @@ class Record extends Model
 
     public function order()
     {
-        return $this->belongsTo('App\Order');
+        return $this->belongsTo(Order::class);
     }
 
     public function products()
     {
-        return $this->hasMany('App\Product')->where('active', 1);
+        return $this->hasMany(Product::class);
     }
 }

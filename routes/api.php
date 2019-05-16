@@ -1,5 +1,9 @@
 <?php
 
+// header('Access-Control-Allow-Origin:  *');
+// header('Access-Control-Allow-Methods:  POST, GET, OPTIONS, PUT, DELETE');
+// header('Access-Control-Allow-Headers:  Content-Type, X-Auth-Token, Origin, Authorization');
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,14 +20,25 @@
 // });
 
 // -------------------------------------------------------------------------------
+// * - Auth
+// -------------------------------------------------------------------------------
+Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
+
+// -------------------------------------------------------------------------------
 // * - Users
 // -------------------------------------------------------------------------------
 Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
 
 // -------------------------------------------------------------------------------
+// * - Clients
+// -------------------------------------------------------------------------------
+Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']]);
+
+// -------------------------------------------------------------------------------
 // * - Orders
 // -------------------------------------------------------------------------------
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
+Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index']]);
 
 // -------------------------------------------------------------------------------
 // * - Products

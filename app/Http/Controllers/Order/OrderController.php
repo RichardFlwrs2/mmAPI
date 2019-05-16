@@ -8,7 +8,8 @@ use App\Order;
 
 class OrderController extends ApiController
 {
-    /**
+    // ---------------------------------------------------------------------------------
+    /** --------------------------------------------------------------------------------
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -20,7 +21,8 @@ class OrderController extends ApiController
         return $this->showAll($orders);
     }
 
-    /**
+    // ---------------------------------------------------------------------------------
+    /** --------------------------------------------------------------------------------
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -31,7 +33,8 @@ class OrderController extends ApiController
         //
     }
 
-    /**
+    // ---------------------------------------------------------------------------------
+    /** --------------------------------------------------------------------------------
      * Display the specified resource.
      *
      * @param  int  $id
@@ -43,7 +46,8 @@ class OrderController extends ApiController
     }
 
 
-    /**
+    // ---------------------------------------------------------------------------------
+    /** --------------------------------------------------------------------------------
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -61,8 +65,10 @@ class OrderController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Order $order)
     {
-        //
+        $order->delete();
+
+        return $this->showOne($order);
     }
 }
