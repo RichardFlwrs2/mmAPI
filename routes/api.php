@@ -22,25 +22,36 @@
 // -------------------------------------------------------------------------------
 // * - Auth
 // -------------------------------------------------------------------------------
-Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
+// Route::group([
+//     'prefix' => 'auth',
+// ], function () {
+//     Route::post('login', 'AuthController@login');
+//     Route::post('logout', 'AuthController@logout');
+//     Route::post('refresh', 'AuthController@refresh');
+//     Route::post('me', 'AuthController@me');
+// });
+
+Route::post('/login', 'AuthController@login');
+Route::post('/refresh', 'AuthController@refresh');
+Route::post('/logout', 'AuthController@logout');
 
 // -------------------------------------------------------------------------------
 // * - Users
 // -------------------------------------------------------------------------------
-Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
+Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Clients
 // -------------------------------------------------------------------------------
-Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']]);
+Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Orders
 // -------------------------------------------------------------------------------
-Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
-Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index']]);
+Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']])->middleware('jwt');
+Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Products
 // -------------------------------------------------------------------------------
-Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']]);
+Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']])->middleware('jwt');

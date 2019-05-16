@@ -2,13 +2,14 @@
 
 namespace App;
 
-use App\Role;
 use App\Order;
+use App\Role;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, SoftDeletes;
 
@@ -17,7 +18,6 @@ class User extends Authenticatable
 
     const USUARIO_ADMINISTRADOR = 'true';
     const USUARIO_REGULAR = 'false';
-
 
     protected $table = 'users';
     protected $dates = ['deleted_at'];
@@ -59,9 +59,6 @@ class User extends Authenticatable
         $this->attributes['email'] = strtolower($valor);
     }
 
-
-
-
     public function esVerificado()
     {
         return $this->verified == User::USUARIO_VERIFICADO;
@@ -75,6 +72,25 @@ class User extends Authenticatable
     public static function generarVerificationToken()
     {
         return str_random(40);
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
 }
