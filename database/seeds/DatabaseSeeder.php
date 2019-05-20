@@ -42,6 +42,10 @@ class DatabaseSeeder extends Seeder
         $super_admin->verified = User::USUARIO_VERIFICADO;
         $super_admin->verification_token = User::generarVerificationToken();
         $super_admin->role_id = 1;
+        $super_admin->phone = '8123995671';
+        $super_admin->birthdayDate = '1996-12-17';
+        $super_admin->puesto = 'Jefe';
+        $super_admin->address = 'Nuevo León, Monterrey';
         $super_admin->save();
 
         factory(User::class, $cantidadUsuarios)->create();

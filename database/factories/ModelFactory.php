@@ -35,7 +35,11 @@ $factory->define(User::class, function (Faker $faker) {
         'role_id' => $faker->randomElement([
             Role::COTIZADOR,
             Role::VENDEDOR,
-        ]),
+            ]),
+        'phone' => $faker->numerify('##########'),
+        'birthdayDate' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'puesto' => $faker->word,
+        'address' => $faker->address,
     ];
 });
 

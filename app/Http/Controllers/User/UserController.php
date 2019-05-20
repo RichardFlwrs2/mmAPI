@@ -20,7 +20,6 @@ class UserController extends ApiController
         return $this->showAll($usuarios);
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
@@ -33,7 +32,12 @@ class UserController extends ApiController
         $reglas = [
             'name' => 'required',
             'email' => 'required|email|unique:users',
+            'role_id' => 'required|numeric',
             'password' => 'required|min:6|confirmed',
+            'phone' => 'required|min:6|max:16',
+            'birthdayDate' => 'required',
+            'puesto' => 'required',
+            'address' => 'required',
         ];
 
         $this->validate($request, $reglas);
@@ -59,7 +63,6 @@ class UserController extends ApiController
     {
         return $this->showOne($user);
     }
-
 
     /**
      * Update the specified resource in storage.
