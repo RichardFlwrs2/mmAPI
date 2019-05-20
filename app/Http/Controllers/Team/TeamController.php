@@ -40,7 +40,7 @@ class TeamController extends ApiController
      */
     public function show(Team $team)
     {
-        //
+        return $this->showOne($team);
     }
 
 

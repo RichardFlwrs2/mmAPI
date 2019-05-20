@@ -62,7 +62,9 @@ class DatabaseSeeder extends Seeder
 
         factory(Team::class, $cantidadTeams)->create()->each(
 			function ($team) {
-				$users = User::all()->random(mt_rand(1, 3))->pluck('id');
+                $team->users_members()->attach($team->owner_id);
+
+                $users = User::all()->random(mt_rand(1, 3))->pluck('id');
 				$team->users_members()->attach($users);
 			}
 		);
