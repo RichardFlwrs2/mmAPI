@@ -75,14 +75,18 @@ class UserController extends ApiController
     {
         $reglas = [
             'email' => 'email|unique:users,email,' . $user->id,
+            'name' => 'present|max:250',
             'password' => 'min:6|confirmed',
+            'role_id' => 'numeric',
+            'phone' => 'present|min:6|max:16',
+            'birthdayDate' => 'present',
+            'puesto' => 'present',
+            'address' => 'present',
         ];
 
         $this->validate($request, $reglas);
 
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
+        $user->fill((array) $request->all());
 
         if ($request->has('email') && $user->email != $request->email) {
             $user->verified = User::USUARIO_NO_VERIFICADO;
