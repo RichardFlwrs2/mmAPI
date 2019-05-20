@@ -22,15 +22,6 @@
 // -------------------------------------------------------------------------------
 // * - Auth
 // -------------------------------------------------------------------------------
-// Route::group([
-//     'prefix' => 'auth',
-// ], function () {
-//     Route::post('login', 'AuthController@login');
-//     Route::post('logout', 'AuthController@logout');
-//     Route::post('refresh', 'AuthController@refresh');
-//     Route::post('me', 'AuthController@me');
-// });
-
 Route::post('/login', 'AuthController@login');
 Route::post('/refresh', 'AuthController@refresh');
 Route::post('/logout', 'AuthController@logout');
@@ -39,6 +30,12 @@ Route::post('/logout', 'AuthController@logout');
 // * - Users
 // -------------------------------------------------------------------------------
 Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']])->middleware('jwt');
+Route::resource('users.teams', 'User\UserTeamController', ['only' => ['index']])->middleware('jwt');
+
+// -------------------------------------------------------------------------------
+// * - Teams
+// -------------------------------------------------------------------------------
+Route::resource('teams', 'Team\TeamController', ['except' => ['create', 'edit']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Clients

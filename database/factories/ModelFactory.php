@@ -4,6 +4,7 @@
 use App\Order;
 use App\Product;
 use App\Record;
+use App\Team;
 use App\Role;
 use App\User;
 use App\Client;
@@ -31,7 +32,7 @@ $factory->define(User::class, function (Faker $faker) {
         'remember_token' => str_random(10),
         'verified' => $verificado = $faker->randomElement([User::USUARIO_VERIFICADO, User::USUARIO_NO_VERIFICADO]),
         'verification_token' => $verificado == User::USUARIO_VERIFICADO ? null : User::generarVerificationToken(),
-        'admin' => $faker->randomElement([User::USUARIO_ADMINISTRADOR, User::USUARIO_REGULAR]),
+        'admin' => User::USUARIO_REGULAR,
         'role_id' => $faker->randomElement([
             Role::COTIZADOR,
             Role::VENDEDOR,
@@ -117,4 +118,16 @@ $factory->define(Product::class, function (Faker $faker) {
         'costo_u' => $tieneCostos ? $faker->randomElement([$costoU, 5]) : null,
         'costo_t' => $tieneCostos ? $costoT : null,
     ];
+});
+
+
+$factory->define(Team::class, function (Faker $faker) {
+
+    $admins = User::where('admin', 'true' )->get();
+
+    return [
+        'name' => $faker->word,
+        'owner_id' => $admins->random()->id,
+    ];
+
 });
