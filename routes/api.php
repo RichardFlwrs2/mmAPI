@@ -31,6 +31,7 @@ Route::post('/logout', 'AuthController@logout');
 // -------------------------------------------------------------------------------
 Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']])->middleware('jwt');
 Route::resource('users.teams', 'User\UserTeamController', ['only' => ['index']])->middleware('jwt');
+Route::resource('users.orders', 'User\UserOrderController', ['only' => ['index']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Teams

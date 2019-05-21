@@ -5,6 +5,7 @@ namespace App;
 use App\User;
 use App\Status;
 use App\Record;
+use App\Client;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -39,8 +40,18 @@ class Order extends Model
         return $this->belongsTo(Status::class, 'status_id');
     }
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
+    }
+
     public function records()
     {
         return $this->hasMany(Record::class);
+    }
+
+    public function last_record()
+    {
+        return $this->hasMany(Record::class)->latest()->take(1);
     }
 }

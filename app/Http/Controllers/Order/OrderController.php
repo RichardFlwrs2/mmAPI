@@ -42,7 +42,8 @@ class OrderController extends ApiController
      */
     public function show(Order $order)
     {
-        return $this->showOne($order);
+        $orderData = Order::with(['last_record.products', 'status', 'client'])->where('id', $order->id)->firstOrFail();
+        return $this->showOne($orderData);
     }
 
 
