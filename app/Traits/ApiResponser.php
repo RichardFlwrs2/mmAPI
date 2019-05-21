@@ -10,70 +10,100 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponser
 {
+    // --------------------------------------------------------------------------------------------- //
+    // ? - API TYPE RESPONSES
+    // --------------------------------------------------------------------------------------------- //
+
+    // * ----------------------------------------------------------- //
+    // * - SUCCESS
+    // * ----------------------------------------------------------- //
 	private function successResponse($data, $code)
 	{
 		return response()->json($data, $code);
 	}
 
+    // * ----------------------------------------------------------- //
+    // * - ERROR
+    // * ----------------------------------------------------------- //
 	protected function errorResponse($message, $code)
 	{
 		return response()->json(['error' => $message, 'code' => $code], $code);
 	}
 
+    // * ----------------------------------------------------------- //
+    // * - SHOW ARRAY DATA
+    // * ----------------------------------------------------------- //
 	protected function showAll(Collection $collection, $code = 200)
 	{
 		if ($collection->isEmpty()) {
 			return $this->successResponse(['data' => $collection], $code);
 		}
 
-		$transformer = $collection->first()->transformer;
 
-		$collection = $this->filterData($collection, $transformer);
-		$collection = $this->sortData($collection, $transformer);
+		$collection = $this->filterData($collection);
+		$collection = $this->sortData($collection);
 		$collection = $this->paginate($collection);
-		// $collection = $this->transformData($collection, $transformer);
 		$collection = $this->cacheResponse($collection);
 
 
 		return $this->successResponse($collection, $code);
 	}
 
+    // * ----------------------------------------------------------- //
+    // * - SHOW SINGLE DATA
+    // * ----------------------------------------------------------- //
 	protected function showOne(Model $instance, $code = 200)
 	{
-		$transformer = $instance->transformer;
-		// $instance = $this->transformData($instance, $transformer);
-
 		return $this->successResponse($instance, $code);
-	}
+    }
 
+
+    // * ----------------------------------------------------------- //
+    // * - MESSAGE
+    // * ----------------------------------------------------------- //
 	protected function showMessage($message, $code = 200)
 	{
-		return $this->successResponse(['data' => $message], $code);
-	}
+        return $this->successResponse(['data' => $message], $code);
+    }
 
-	protected function filterData(Collection $collection, $transformer)
+
+    // --------------------------------------------------------------------------------------------- //
+    // ? - Querys de Busqueda y Filtrado
+    // --------------------------------------------------------------------------------------------- //
+
+    // * ----------------------------------------------------------- //
+    // * - FILTER
+    // * ----------------------------------------------------------- //
+	protected function filterData(Collection $collection)
 	{
-		foreach (request()->query() as $query => $value) {
-			$attribute = $transformer::originalAttribute($query);
+        $array = array('sort_by', 'page', 'per_page');
 
-			if (isset($attribute, $value)) {
-				$collection = $collection->where($attribute, $value);
+		foreach (request()->query() as $query => $value) {
+
+			if (isset($query, $value) && !in_array($query, $array)) {
+				$collection = $collection->where($query, $value);
 			}
 		}
 
 		return $collection;
 	}
 
-	protected function sortData(Collection $collection, $transformer)
+    // * ----------------------------------------------------------- //
+    // * - SORT
+    // * ----------------------------------------------------------- //
+	protected function sortData(Collection $collection)
 	{
 		if (request()->has('sort_by')) {
-			$attribute = $transformer::originalAttribute(request()->sort_by);
+			$attribute = request()->sort_by;
 
-			$collection = $collection->sortBy->{$attribute};
+            $collection = $collection->sortBy->{$attribute};
 		}
 		return $collection;
 	}
 
+    // * ----------------------------------------------------------- //
+    // * - PAGINATION
+    // * ----------------------------------------------------------- //
 	protected function paginate(Collection $collection)
 	{
 		$rules = [
@@ -100,13 +130,10 @@ trait ApiResponser
 		return $paginated;
 	}
 
-	protected function transformData($data, $transformer)
-	{
-		$transformation = fractal($data, new $transformer);
 
-		return $transformation->toArray();
-	}
-
+    // * ----------------------------------------------------------- //
+    // * - CACHE
+    // * ----------------------------------------------------------- //
 	protected function cacheResponse($data)
 	{
 		$url = request()->url();
