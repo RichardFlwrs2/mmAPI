@@ -42,6 +42,7 @@ Route::resource('teams.users', 'Team\TeamUserController', ['only' => ['index']])
 // * - Clients
 // -------------------------------------------------------------------------------
 Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']])->middleware('jwt');
+Route::resource('clients.contacts', 'Client\ClientContactController', ['only' => ['index']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Orders

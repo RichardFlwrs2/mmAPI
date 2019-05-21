@@ -9,6 +9,7 @@ use App\Role;
 use App\User;
 use App\Client;
 use App\Contact;
+use App\Field;
 use Faker\Generator as Faker;
 
 /*
@@ -98,7 +99,6 @@ $factory->define(Record::class, function (Faker $faker) {
 
 $factory->define(Product::class, function (Faker $faker) {
 
-    $order = Order::all()->random();
     $tieneCostos = $faker->randomElement([true, false]);
 
     $costoU = $faker->randomFloat(2, 1, 99999);
@@ -120,7 +120,6 @@ $factory->define(Product::class, function (Faker $faker) {
     ];
 });
 
-
 $factory->define(Team::class, function (Faker $faker) {
 
     $admins = User::where('admin', 'true' )->get();
@@ -128,6 +127,23 @@ $factory->define(Team::class, function (Faker $faker) {
     return [
         'name' => $faker->word,
         'owner_id' => $admins->random()->id,
+    ];
+
+});
+
+
+$factory->define(Field::class, function (Faker $faker) {
+
+    $client_id = Client::all()->random()->id;
+    $user_id = User::all()->random()->id;
+    $contact_id = Contact::all()->random()->id;
+
+    return [
+        'name' => $faker->word,
+        'data' => $faker->word,
+        'client_id' => $attempt1 = $faker->randomElement([$client_id, null]),
+        'user_id' => $attempt2 = $attempt1 != null ? null : $faker->randomElement([$user_id, null]),
+        'contact_id' => $attempt2 == null && $attempt1 == null ? $contact_id : null,
     ];
 
 });

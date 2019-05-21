@@ -15,7 +15,17 @@ class CreateFieldsTable extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('data');
+            $table->integer('client_id')->unsigned()->nullable();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('contact_id')->unsigned()->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

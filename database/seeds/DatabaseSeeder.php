@@ -7,6 +7,7 @@ use App\Product;
 use App\Client;
 use App\Contact;
 use App\Team;
+use App\Field;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -27,10 +28,13 @@ class DatabaseSeeder extends Seeder
         Record::truncate();
         Product::truncate();
         Team::truncate();
+        DB::table('team_user')->truncate();
 
         $cantidadUsuarios = 9;
         $cantidadClientes = 3;
         $cantidadContactos = 9;
+        $cantidadFields = $cantidadClientes + $cantidadContactos + $cantidadUsuarios;
+
         $cantidadOrdenes = 15;
         $cantidadRecords = 20;
         $cantidadProductos = 60;
@@ -38,6 +42,30 @@ class DatabaseSeeder extends Seeder
         $cantidadTeams = 3;
 
 
+        $this->createAdmin();
+
+        factory(User::class, $cantidadUsuarios)->create();
+        factory(Client::class, $cantidadClientes)->create();
+        factory(Contact::class, $cantidadContactos)->create();
+        factory(Field::class, $cantidadFields)->create();
+
+        factory(Order::class, $cantidadOrdenes)->create();
+        factory(Record::class, $cantidadRecords)->create();
+        factory(Product::class, $cantidadProductos)->create();
+
+        factory(Team::class, $cantidadTeams)->create()->each(
+			function ($team) {
+                $team->users_members()->attach($team->owner_id);
+
+                $users = User::all()->random(mt_rand(1, 3))->pluck('id');
+				$team->users_members()->attach($users);
+			}
+		);
+    }
+
+
+
+    protected function createAdmin() {
         $super_admin = new User;
         $super_admin->name = 'Admin';
         $super_admin->email = 'admin@admin.com';
@@ -52,21 +80,5 @@ class DatabaseSeeder extends Seeder
         $super_admin->puesto = 'Jefe';
         $super_admin->address = 'Nuevo León, Monterrey';
         $super_admin->save();
-
-        factory(User::class, $cantidadUsuarios)->create();
-        factory(Client::class, $cantidadClientes)->create();
-        factory(Contact::class, $cantidadContactos)->create();
-        factory(Order::class, $cantidadOrdenes)->create();
-        factory(Record::class, $cantidadRecords)->create();
-        factory(Product::class, $cantidadProductos)->create();
-
-        factory(Team::class, $cantidadTeams)->create()->each(
-			function ($team) {
-                $team->users_members()->attach($team->owner_id);
-
-                $users = User::all()->random(mt_rand(1, 3))->pluck('id');
-				$team->users_members()->attach($users);
-			}
-		);
     }
 }

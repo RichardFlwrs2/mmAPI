@@ -39,7 +39,7 @@ class ClientController extends ApiController
      */
     public function show(Client $client)
     {
-        $clientData = Client::with(['contacts'])->where('id', $client->id)->get();
+        $clientData = Client::with(['fields'])->where('id', $client->id)->get();
 
         return $this->showAll($clientData);
     }
