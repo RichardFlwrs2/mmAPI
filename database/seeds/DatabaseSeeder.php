@@ -28,10 +28,10 @@ class DatabaseSeeder extends Seeder
         Product::truncate();
         Team::truncate();
 
-        $cantidadUsuarios = 3;
+        $cantidadUsuarios = 9;
         $cantidadClientes = 3;
         $cantidadContactos = 9;
-        $cantidadOrdenes = 6;
+        $cantidadOrdenes = 15;
         $cantidadRecords = 20;
         $cantidadProductos = 60;
 
