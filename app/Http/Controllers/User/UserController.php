@@ -8,11 +8,9 @@ use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - I N D E X
+    // ----------------------------------------------------------------------------------------------------- //
     public function index()
     {
         $usuarios = User::with(['role'])->get();
@@ -20,12 +18,11 @@ class UserController extends ApiController
         return $this->showAll($usuarios);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S T O R E
+    // ----------------------------------------------------------------------------------------------------- //
     public function store(Request $request)
     {
 
@@ -54,24 +51,21 @@ class UserController extends ApiController
     }
 
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S H O W
+    // ----------------------------------------------------------------------------------------------------- //
     public function show(User $user)
     {
         return $this->showOne($user);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - U P D A T E
+    // ----------------------------------------------------------------------------------------------------- //
     public function update(Request $request, User $user)
     {
         $reglas = [
@@ -108,12 +102,11 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - D E S T R O Y
+    // ----------------------------------------------------------------------------------------------------- //
     public function destroy(User $user)
     {
         $user->delete();
@@ -121,6 +114,10 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - AUTH TOKEN VERIFY
+    // ----------------------------------------------------------------------------------------------------- //
     public function verify($token)
     {
         $user = User::where('verification_token', $token)->firstOrFail();

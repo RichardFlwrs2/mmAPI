@@ -166,7 +166,7 @@ return [
          * Package Service Providers...
          */
         Barryvdh\Cors\ServiceProvider::class,
-        Spatie\Fractal\FractalServiceProvider::class,
+        // Spatie\Fractal\FractalServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -10,11 +10,9 @@ use Illuminate\Http\Request;
 
 class ClientController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - I N D E X
+    // ----------------------------------------------------------------------------------------------------- //
     public function index()
     {
         $clientes = Client::all();
@@ -22,12 +20,9 @@ class ClientController extends ApiController
         return $this->showAll($clientes);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S T O R E
+    // ----------------------------------------------------------------------------------------------------- //
     public function store(Request $request)
     {
 
@@ -69,14 +64,13 @@ class ClientController extends ApiController
         $client = Client::create($client_data);
 
         // Campos Extras
-        if ( isset($client_data['fields']) ) {
+        if (isset($client_data['fields'])) {
 
             foreach ($client_data['fields'] as $key => $value) {
                 $value['client_id'] = $client->id;
                 $field = Field::create($value);
             }
         }
-
 
         // * ------------------------------------------------ //
         // * - Contacts Store
@@ -86,7 +80,7 @@ class ClientController extends ApiController
             $contact = Contact::create($contact_value);
 
             // Campos Extras
-            if ( isset($contact_value['fields']) ) {
+            if (isset($contact_value['fields'])) {
 
                 foreach ($contact_value['fields'] as $key => $field_value) {
                     $field_value['contact_id'] = $contact->id;
@@ -94,7 +88,6 @@ class ClientController extends ApiController
                 }
             }
         }
-
 
         // * ------------------------------------------------ //
         // * - Returning data
@@ -106,15 +99,11 @@ class ClientController extends ApiController
         // $clientData = Client::with(['contacts'])->where('id', $client->id)->get();
         // return $this->showAll($clientData, 201);
 
-
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S H O W
+    // ----------------------------------------------------------------------------------------------------- //
     public function show(Client $client)
     {
         $clientData = Client::with(['fields'])->where('id', $client->id)->firstOrFail();
@@ -124,24 +113,111 @@ class ClientController extends ApiController
         return $this->showOne($clientData);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - U P D A T E
+    // ----------------------------------------------------------------------------------------------------- //
     public function update(Request $request, Client $client)
     {
-        //
+        // * ------------------------------------------------ //
+        // * - Validating Data
+        // * ------------------------------------------------ //
+        $reglas = [
+            // * ----| Client |-----
+            'client' => 'required',
+            'client.name' => 'required|max:250',
+            'client.created_by' => 'required|numeric',
+            'client.phone' => 'required|min:6|max:16',
+            'client.address' => 'required|max:250',
+            'client.ciudad' => 'required|max:250',
+            'client.estado' => 'required|max:250',
+            'client.pais' => 'required|max:250',
+            'client.codigo_postal' => 'required|max:15',
+            'client.puesto' => 'required|max:150',
+            'client.rfc' => 'required|max:16',
+
+            // * ----| Contacts |-----
+            'contacts' => 'required',
+            'contacts.*.name' => 'required|max:250',
+            'contacts.*.area' => 'required|max:250',
+            'contacts.*.puesto' => 'required|max:250',
+            'contacts.*.email' => 'required|email|max:250',
+            'contacts.*.phone' => 'required|min:6|max:16',
+
+            // * ----| Entities to Delete |-----
+            'to_delete' => 'required',
+            'to_delete.contacts' => 'present|array',
+            'to_delete.fields' => 'present|array',
+        ];
+        $this->validate($request, $reglas);
+
+
+        $client_data = $request->client;
+        $contact_data = $request->contacts;
+        $contacts_to_delete = $request->to_delete['contacts'];
+        $fields_to_delete = $request->to_delete['fields'];
+
+        // * ------------------------------------------------ //
+        // * - Client Update
+        // * ------------------------------------------------ //
+
+        $client->fill((array) $client_data);
+        $client->save();
+
+
+        // Campos Extras
+        if (isset($client_data['fields'])) {
+
+            foreach ($client_data['fields'] as $key => $field_value) {
+                // dd($field_value);
+                $field = Field::where('id', $field_value['id'])->firstOrFail();
+                $field->fill((array) $field_value);
+                $field->save();
+            }
+        }
+
+        // * ------------------------------------------------ //
+        // * - Contacts Update
+        // * ------------------------------------------------ //
+        foreach ($contact_data as $contacts => $contact_value) {
+            $contact = Contact::where('id', $contact_value['id'])->firstOrFail();
+            $contact->fill((array) $contact_value);
+            $contact->save();
+
+
+            // Campos Extras
+            if (isset($contact_value['fields'])) {
+
+                foreach ($contact_value['fields'] as $key => $field_value) {
+                    $field = Field::where('id', $field_value['id'])->firstOrFail();
+                    $field->fill((array) $field_value);
+                    $field->save();
+                }
+            }
+        }
+
+        // * ------------------------------------------------ //
+        // * - Entities To Delete
+        // * ------------------------------------------------ //
+        foreach ($contacts_to_delete as $contacts => $contact_id) {
+            $data = Contact::where('id', $contact_id)->firstOrFail();
+            $data->delete();
+        }
+
+        foreach ($fields_to_delete as $fields => $field_id) {
+            $data = Field::where('id', $field_id)->firstOrFail();
+            $data->delete();
+        }
+
+        // * ------------------------------------------------ //
+        // * - Returning data
+        // * ------------------------------------------------ //
+        $clientData = Client::with(['fields'])->where('id', $client->id)->firstOrFail();
+        return $this->showOne($clientData);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - D E S T R O Y
+    // ----------------------------------------------------------------------------------------------------- //
     public function destroy(Client $client)
     {
         $client->delete();
