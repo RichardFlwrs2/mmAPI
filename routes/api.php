@@ -45,6 +45,11 @@ Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'e
 Route::resource('clients.contacts', 'Client\ClientContactController', ['only' => ['index']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
+// * - Contacts
+// -------------------------------------------------------------------------------
+Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', 'store']])->middleware('jwt');
+
+// -------------------------------------------------------------------------------
 // * - Orders
 // -------------------------------------------------------------------------------
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']])->middleware('jwt');

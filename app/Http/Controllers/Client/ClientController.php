@@ -43,7 +43,6 @@ class ClientController extends ApiController
             'client.estado' => 'required|max:250',
             'client.pais' => 'required|max:250',
             'client.codigo_postal' => 'required|max:15',
-            'client.puesto' => 'required|max:150',
             'client.rfc' => 'required|max:16',
 
             // * ----| Contacts |-----
@@ -132,16 +131,7 @@ class ClientController extends ApiController
             'client.estado' => 'required|max:250',
             'client.pais' => 'required|max:250',
             'client.codigo_postal' => 'required|max:15',
-            'client.puesto' => 'required|max:150',
             'client.rfc' => 'required|max:16',
-
-            // * ----| Contacts |-----
-            'contacts' => 'required',
-            'contacts.*.name' => 'required|max:250',
-            'contacts.*.area' => 'required|max:250',
-            'contacts.*.puesto' => 'required|max:250',
-            'contacts.*.email' => 'required|email|max:250',
-            'contacts.*.phone' => 'required|min:6|max:16',
 
             // * ----| Entities to Delete |-----
             'to_delete' => 'required',
@@ -152,7 +142,6 @@ class ClientController extends ApiController
 
 
         $client_data = $request->client;
-        $contact_data = $request->contacts;
         $contacts_to_delete = $request->to_delete['contacts'];
         $fields_to_delete = $request->to_delete['fields'];
 
@@ -178,22 +167,22 @@ class ClientController extends ApiController
         // * ------------------------------------------------ //
         // * - Contacts Update
         // * ------------------------------------------------ //
-        foreach ($contact_data as $contacts => $contact_value) {
-            $contact = Contact::where('id', $contact_value['id'])->firstOrFail();
-            $contact->fill((array) $contact_value);
-            $contact->save();
+        // foreach ($contact_data as $contacts => $contact_value) {
+        //     $contact = Contact::where('id', $contact_value['id'])->firstOrFail();
+        //     $contact->fill((array) $contact_value);
+        //     $contact->save();
 
 
-            // Campos Extras
-            if (isset($contact_value['fields'])) {
+        //     // Campos Extras
+        //     if (isset($contact_value['fields'])) {
 
-                foreach ($contact_value['fields'] as $key => $field_value) {
-                    $field = Field::where('id', $field_value['id'])->firstOrFail();
-                    $field->fill((array) $field_value);
-                    $field->save();
-                }
-            }
-        }
+        //         foreach ($contact_value['fields'] as $key => $field_value) {
+        //             $field = Field::where('id', $field_value['id'])->firstOrFail();
+        //             $field->fill((array) $field_value);
+        //             $field->save();
+        //         }
+        //     }
+        // }
 
         // * ------------------------------------------------ //
         // * - Entities To Delete
