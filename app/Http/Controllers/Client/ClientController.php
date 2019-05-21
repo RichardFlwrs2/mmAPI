@@ -165,26 +165,6 @@ class ClientController extends ApiController
         }
 
         // * ------------------------------------------------ //
-        // * - Contacts Update
-        // * ------------------------------------------------ //
-        // foreach ($contact_data as $contacts => $contact_value) {
-        //     $contact = Contact::where('id', $contact_value['id'])->firstOrFail();
-        //     $contact->fill((array) $contact_value);
-        //     $contact->save();
-
-
-        //     // Campos Extras
-        //     if (isset($contact_value['fields'])) {
-
-        //         foreach ($contact_value['fields'] as $key => $field_value) {
-        //             $field = Field::where('id', $field_value['id'])->firstOrFail();
-        //             $field->fill((array) $field_value);
-        //             $field->save();
-        //         }
-        //     }
-        // }
-
-        // * ------------------------------------------------ //
         // * - Entities To Delete
         // * ------------------------------------------------ //
         foreach ($contacts_to_delete as $contacts => $contact_id) {

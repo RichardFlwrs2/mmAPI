@@ -69,11 +69,39 @@ class ContactController extends ApiController
             'email' => 'required|email|max:250',
             'phone' => 'required|min:6|max:16',
             'fields' => 'present|array',
+            'to_delete' => 'present|array',
         ];
+
+        $this->validate($request, $reglas);
 
         $contact->fill((array) $request->all());
         $contact->save();
 
+        // Campos Extras
+        foreach ($request['fields'] as $key => $field_value) {
+
+            if ( $field_value['id'] === null ) {
+
+                $field_value['contact_id'] = $contact->id;
+                $field = Field::create($field_value);
+
+            } else {
+
+                $field = Field::where('id', $field_value['id'])->firstOrFail();
+                $field->fill((array) $field_value);
+                $field->save();
+            }
+        }
+
+        // Campos Extras a [ BORRAR ]
+        foreach ($request['to_delete'] as $key => $field_id) {
+
+            $data = Field::where('id', $field_id)->firstOrFail();
+            $data->delete();
+
+        }
+
+        $contact = Contact::with(['fields'])->where('id', $contact->id)->firstOrFail();
         return $this->showOne($contact);
 
     }
