@@ -20,7 +20,7 @@ class Field extends Model
     ];
 
     protected $hidden = [
-        'client_id', 'user_id', 'contact_id',
+        'client_id', 'user_id', 'contact_id', 'created_at', 'updated_at', 'deleted_at',
     ];
 
 

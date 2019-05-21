@@ -53,6 +53,7 @@ class UserController extends ApiController
         return $this->showOne($usuario, 201);
     }
 
+
     /**
      * Display the specified resource.
      *
