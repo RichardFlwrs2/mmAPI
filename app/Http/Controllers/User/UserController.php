@@ -28,13 +28,10 @@ class UserController extends ApiController
     {
 
         $data = json_decode( $request->input('data') , true );
-        // $fileName = $request->file('file')->getClientOriginalName();
-        $fileName = $request->file->getClientOriginalName();
 
         // $file = $request->file->store('pdf', 'local');
-        $file = $request->file->store('');
+        // $file = $request->file->store('');
 
-        // dd( $file );
 
         Validator::make($data, [
             'name' => 'required',
@@ -46,6 +43,16 @@ class UserController extends ApiController
             'puesto' => 'required',
             'address' => 'required',
         ])->validate();
+
+
+        if ( isset( $request->file ) ) {
+
+            $fileName = $request->file->getClientOriginalName();
+            // $file = $request->file->store('');
+            dd( $fileName );
+
+        }
+
 
         $data = json_decode( $request->input('data') );
         $data->password = bcrypt($data->password);

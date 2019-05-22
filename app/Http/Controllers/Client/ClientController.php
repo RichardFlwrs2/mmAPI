@@ -158,9 +158,20 @@ class ClientController extends ApiController
 
             foreach ($client_data['fields'] as $key => $field_value) {
                 // dd($field_value);
-                $field = Field::where('id', $field_value['id'])->firstOrFail();
-                $field->fill((array) $field_value);
-                $field->save();
+
+                if ( isset( $field_value['id'] ) ) {
+
+                    $field = Field::where('id', $field_value['id'])->firstOrFail();
+                    $field->fill((array) $field_value);
+                    $field->save();
+
+                } else {
+
+                    $field_value['client_id'] = $client->id;
+                    $field = Field::create($field_value);
+
+                }
+
             }
         }
 
