@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use Validator;
 use App\Http\Controllers\ApiController;
 use App\User;
 use Illuminate\Http\Request;
@@ -26,7 +27,16 @@ class UserController extends ApiController
     public function store(Request $request)
     {
 
-        $reglas = [
+        $data = json_decode( $request->input('data') , true );
+        // $fileName = $request->file('file')->getClientOriginalName();
+        $fileName = $request->file->getClientOriginalName();
+
+        // $file = $request->file->store('pdf', 'local');
+        $file = $request->file->store('');
+
+        // dd( $file );
+
+        Validator::make($data, [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'role_id' => 'required|numeric',
@@ -35,17 +45,15 @@ class UserController extends ApiController
             'birthdayDate' => 'required',
             'puesto' => 'required',
             'address' => 'required',
-        ];
+        ])->validate();
 
-        $this->validate($request, $reglas);
+        $data = json_decode( $request->input('data') );
+        $data->password = bcrypt($data->password);
+        $data->verified = User::USUARIO_NO_VERIFICADO;
+        $data->verification_token = User::generarVerificationToken();
+        $data->admin = User::USUARIO_REGULAR;
 
-        $campos = $request->all();
-        $campos['password'] = bcrypt($request->password);
-        $campos['verified'] = User::USUARIO_NO_VERIFICADO;
-        $campos['verification_token'] = User::generarVerificationToken();
-        $campos['admin'] = User::USUARIO_REGULAR;
-
-        $usuario = User::create($campos);
+        $usuario = User::create((array) $data);
 
         return $this->showOne($usuario, 201);
     }

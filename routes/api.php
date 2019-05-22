@@ -60,7 +60,7 @@ Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['upd
 // -------------------------------------------------------------------------------
 // * - Records
 // -------------------------------------------------------------------------------
-Route::resource('records', 'Record\RecordController', ['only' => ['show']])->middleware('jwt');
+Route::resource('records', 'Record\RecordController', ['only' => ['show', 'store']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Products
