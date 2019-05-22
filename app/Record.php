@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Record extends Model
 {
+    protected $hidden = [ 'deleted_at', ];
     protected $fillable = ['order_id', 'numero_cotizacion', 'monto_total', 'temporal'];
 
     public function order()

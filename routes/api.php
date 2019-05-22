@@ -54,7 +54,12 @@ Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', '
 // * - Orders
 // -------------------------------------------------------------------------------
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']])->middleware('jwt');
-Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index']])->middleware('jwt');
+Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']])->middleware('jwt');
+
+// -------------------------------------------------------------------------------
+// * - Records
+// -------------------------------------------------------------------------------
+Route::resource('records', 'Record\RecordController', ['only' => ['show']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Products

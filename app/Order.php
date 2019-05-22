@@ -12,6 +12,7 @@ class Order extends Model
 {
 
     protected $dates = ['deleted_at'];
+    protected $appends = ['index_records'];
 
     protected $fillable = [
         'created_by',
@@ -24,6 +25,7 @@ class Order extends Model
         'finished_at',
         'sended_at',
     ];
+    protected $hidden = [ 'deleted_at', ];
 
     public function owner()
     {
@@ -45,6 +47,10 @@ class Order extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+
+    // ------------------------------------------------------- //
+    // - Records
+    // ------------------------------------------------------- //
     public function records()
     {
         return $this->hasMany(Record::class);
@@ -53,5 +59,10 @@ class Order extends Model
     public function last_record()
     {
         return $this->hasMany(Record::class)->latest()->take(1);
+    }
+
+    public function getIndexRecordsAttribute()
+    {
+        return $this->records()->pluck('id');
     }
 }

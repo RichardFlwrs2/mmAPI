@@ -23,6 +23,7 @@ class Product extends Model
         'costo_t',
 
     ];
+    protected $hidden = [ 'deleted_at', ];
 
     public function record()
     {
