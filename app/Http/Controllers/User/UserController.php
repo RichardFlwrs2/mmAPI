@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use Validator;
 use App\Http\Controllers\ApiController;
 use App\User;
+use App\File;
+use App\Type;
 use Illuminate\Http\Request;
 
 class UserController extends ApiController
@@ -28,10 +30,7 @@ class UserController extends ApiController
     {
 
         $data = json_decode( $request->input('data') , true );
-
         // $file = $request->file->store('pdf', 'local');
-        // $file = $request->file->store('');
-
 
         Validator::make($data, [
             'name' => 'required',
@@ -44,16 +43,6 @@ class UserController extends ApiController
             'address' => 'required',
         ])->validate();
 
-
-        if ( isset( $request->file ) ) {
-
-            $fileName = $request->file->getClientOriginalName();
-            // $file = $request->file->store('');
-            dd( $fileName );
-
-        }
-
-
         $data = json_decode( $request->input('data') );
         $data->password = bcrypt($data->password);
         $data->verified = User::USUARIO_NO_VERIFICADO;
@@ -62,7 +51,25 @@ class UserController extends ApiController
 
         $usuario = User::create((array) $data);
 
-        return $this->showOne($usuario, 201);
+
+        if ( isset( $request->file ) ) {
+
+            $fileName = $request->file->getClientOriginalName();
+            $filePath = $request->file->store('avatar');
+
+            $user_avatar = new File;
+            $user_avatar->name = $fileName;
+            $user_avatar->path = $filePath;
+            $user_avatar->type_id = Type::ARCHIVO_AVATAR;
+            $user_avatar->user_id = $usuario->id;
+            $user_avatar->save();
+        } else {
+            dd('no image men');
+        }
+
+        $usuarioData = User::with(['avatar'])->where('id', $usuario->id)->first();
+
+        return $this->showOne($usuarioData, 201);
     }
 
 

@@ -5,6 +5,7 @@ namespace App;
 use App\Order;
 use App\Role;
 use App\Team;
+use App\File;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +48,11 @@ class User extends Authenticatable implements JWTSubject
     public function teams()
     {
         return $this->belongsToMany(Team::class);
+    }
+
+    public function avatar()
+    {
+        return $this->hasOne(File::class);
     }
 
     // Mutators
