@@ -17,7 +17,7 @@ class CreateRecordsTable extends Migration
         Schema::create('records', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('order_id')->unsigned();
-            $table->string('numero_cotizacion')->unique();
+            $table->string('numero_cotizacion')->unique()->nullable();
             $table->integer('monto_total')->unsigned()->nullable();
             $table->string('temporal')->default('0');
             $table->timestamps();

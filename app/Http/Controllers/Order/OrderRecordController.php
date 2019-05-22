@@ -15,7 +15,6 @@ class OrderRecordController extends ApiController
     public function index( Order $order )
     {
         $records = $order->records;
-
         return $this->showAll($records);
     }
 
@@ -35,12 +34,6 @@ class OrderRecordController extends ApiController
         ])
         ->where('id', $order->id)
         ->firstOrFail();
-
-        $record = Record::with(['products'])->where('id', $record->id)->first();
-
-        $test = $orderData->records()->pluck('id');
-
-        // dd($test);
 
         return $this->showOne($orderData);
     }

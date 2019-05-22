@@ -11,6 +11,9 @@ class Record extends Model
     protected $hidden = [ 'deleted_at', ];
     protected $fillable = ['order_id', 'numero_cotizacion', 'monto_total', 'temporal'];
 
+    const RECORD_TEMPORAL = '1';
+    const RECORD_NO_TEMPORAL = '0';
+
     public function order()
     {
         return $this->belongsTo(Order::class);
