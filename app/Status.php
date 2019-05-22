@@ -9,7 +9,7 @@ class Status extends Model
 {
     protected $fillable = ['name', 'description'];
 
-    public function products(){
+    public function orders(){
         return $this->hasMany(Order::class);
     }
 }

@@ -55,6 +55,7 @@ Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', '
 // -------------------------------------------------------------------------------
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']])->middleware('jwt');
 Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']])->middleware('jwt');
+Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['update']])->middleware('jwt');
 
 // -------------------------------------------------------------------------------
 // * - Records
