@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Order;
 
 use App\Order;
 use App\Status;
+use App\Mail\StatusChanged;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
@@ -18,6 +20,8 @@ class OrderStatusController extends ApiController
         $leader = $team->user_leader()->first();
 
         // dd($leader);
+
+        Mail::to($leader)->send(new StatusChanged($leader));
 
         $order->status_id = $status->id;
         $order->save();

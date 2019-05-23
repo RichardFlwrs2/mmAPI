@@ -151,7 +151,7 @@ class ClientController extends ApiController
         }
 
         foreach ($client_data['fields'] as $key => $field_value) {
-            if ( !$client->fields()->get()->contains( 'id', $field_value['id'] ) )
+            if ( $field_value['id'] != null && !$client->fields()->get()->contains( 'id', $field_value['id'] ) )
              return $this->showMessage('El campo con el id: '. $field_value['id'] . ' no existe con este cliente', 400);
         }
 
