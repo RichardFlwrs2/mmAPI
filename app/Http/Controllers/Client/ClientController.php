@@ -132,6 +132,7 @@ class ClientController extends ApiController
             'client.pais' => 'required|max:250',
             'client.codigo_postal' => 'required|max:15',
             'client.rfc' => 'required|max:16',
+            'client.fields' => 'present|array',
 
             // * ----| Entities to Delete |-----
             'to_delete' => 'required',
@@ -146,7 +147,17 @@ class ClientController extends ApiController
 
         foreach ($contacts_to_delete as $key => $c_id) {
            if ( !$client->contacts()->get()->contains( 'id', $c_id ) )
-            return $this->showMessage('El contacto con el id:'. $c_id . ' no existe con este cliente', 400);
+            return $this->showMessage('El contacto con el id: '. $c_id . ' no existe con este cliente', 400);
+        }
+
+        foreach ($client_data['fields'] as $key => $field_value) {
+            if ( !$client->fields()->get()->contains( 'id', $field_value['id'] ) )
+             return $this->showMessage('El campo con el id: '. $field_value['id'] . ' no existe con este cliente', 400);
+        }
+
+        foreach ($fields_to_delete as $key => $f_id) {
+            if ( !$client->fields()->get()->contains( 'id', $f_id ) )
+             return $this->showMessage('El campo con el id: '. $f_id . ' no existe con este cliente', 400);
         }
 
 
@@ -159,25 +170,22 @@ class ClientController extends ApiController
 
 
         // Campos Extras
-        if (isset($client_data['fields'])) {
+        foreach ($client_data['fields'] as $key => $field_value) {
+            // dd($field_value);
 
-            foreach ($client_data['fields'] as $key => $field_value) {
-                // dd($field_value);
+            if ( isset( $field_value['id'] ) ) {
 
-                if ( isset( $field_value['id'] ) ) {
+                $field = Field::where('id', $field_value['id'])->firstOrFail();
+                $field->fill((array) $field_value);
+                $field->save();
 
-                    $field = Field::where('id', $field_value['id'])->firstOrFail();
-                    $field->fill((array) $field_value);
-                    $field->save();
+            } else {
 
-                } else {
-
-                    $field_value['client_id'] = $client->id;
-                    $field = Field::create($field_value);
-
-                }
+                $field_value['client_id'] = $client->id;
+                $field = Field::create($field_value);
 
             }
+
         }
 
         // * ------------------------------------------------ //
