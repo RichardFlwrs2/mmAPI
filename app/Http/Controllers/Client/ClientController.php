@@ -140,10 +140,15 @@ class ClientController extends ApiController
         ];
         $this->validate($request, $reglas);
 
-
         $client_data = $request->client;
         $contacts_to_delete = $request->to_delete['contacts'];
         $fields_to_delete = $request->to_delete['fields'];
+
+        foreach ($contacts_to_delete as $key => $c_id) {
+           if ( !$client->contacts()->get()->contains( 'id', $c_id ) )
+            return $this->showMessage('El contacto con el id:'. $c_id . ' no existe con este cliente', 400);
+        }
+
 
         // * ------------------------------------------------ //
         // * - Client Update
