@@ -193,9 +193,7 @@ class ClientController extends ApiController
         // * ------------------------------------------------ //
         foreach ($contacts_to_delete as $contacts => $contact_id) {
             $data = Contact::where('id', $contact_id)->firstOrFail();
-            $data->client_id = null;
-            $data->deleted_at = date('Y-m-d H:i:s');
-            $data->save();
+            $data->delete();
         }
 
         foreach ($fields_to_delete as $fields => $field_id) {
