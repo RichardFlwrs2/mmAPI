@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Team;
 
 use App\Team;
+use App\Models\StatsData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
@@ -22,8 +23,9 @@ class TeamController extends ApiController
 
     public function stats($id) {
 
-        $user = User::with(['orders'])->where('id', $id)->first();
-        return $this->showOne($user);
+        $team = Team::where('id', $id)->first();
+
+        return StatsData::getStatsOfTeam($team);
 
     }
 
@@ -63,7 +65,7 @@ class TeamController extends ApiController
      */
     public function show(Team $team)
     {
-        $teamData = Team::with(['user_leader'])->where('id', $team->id)->firstOrFail();
+        $teamData = Team::with(['user_leader'])->where('id', $team->id)->firstOrFail()->append('stats');
         return $this->showOne($teamData);
     }
 
