@@ -44,6 +44,11 @@ class User extends Authenticatable implements JWTSubject
         return StatsData::getStatsOfUser($this);
     }
 
+    public function getTeamsAttribute()
+    {
+        return $this->teams()->pluck('name' , 'id');
+    }
+
     // ----------------------------------------------------------------------------------------------------- //
     // ? - RELATIONS
     // ----------------------------------------------------------------------------------------------------- //
