@@ -15,6 +15,8 @@ class StatusChanged extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $url;
+
     public $leader;
     public $status;
     public $order;
@@ -29,6 +31,10 @@ class StatusChanged extends Mailable
      */
     public function __construct(User $leader, Status $status, Order $order)
     {
+
+        $this->url = \Config::get('globals.front_url');
+        $this->url = $this->url.'/orders/'. $order->id;
+
         $this->leader = $leader;
         $this->status = $status;
         $this->order = $order;

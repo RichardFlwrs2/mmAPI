@@ -3,7 +3,7 @@
 
 <p> El usuario {{ $user_asigned->name }} a pasado su requisición a: <b> {{ $status->name }} </b> </p>
 
-@component('mail::button', ['url' => ''])
+@component('mail::button', ['url' => $url ])
     Ir al detalle de la orden
 @endcomponent
 
