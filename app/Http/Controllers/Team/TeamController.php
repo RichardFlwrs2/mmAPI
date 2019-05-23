@@ -20,6 +20,13 @@ class TeamController extends ApiController
         return $this->showAll($teams);
     }
 
+    public function stats($id) {
+
+        $user = User::with(['orders'])->where('id', $id)->first();
+        return $this->showOne($user);
+
+    }
+
 
     /**
      * Store a newly created resource in storage.

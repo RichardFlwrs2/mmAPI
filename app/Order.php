@@ -66,6 +66,6 @@ class Order extends Model
 
     public function getIndexRecordsAttribute()
     {
-        return $this->records()->pluck('id');
+        return $this->records()->pluck('numero_cotizacion' , 'id');
     }
 }

@@ -7,6 +7,8 @@ use App\Http\Controllers\ApiController;
 use App\User;
 use App\File;
 use App\Type;
+use App\Models\StatsData;
+
 use Illuminate\Http\Request;
 
 class UserController extends ApiController
@@ -122,6 +124,14 @@ class UserController extends ApiController
         $user->save();
 
         return $this->showOne($user);
+    }
+
+    public function stats($id) {
+
+        $user = User::where('id', $id)->first();
+
+        return StatsData::getStatsOfUser($user);
+
     }
 
 

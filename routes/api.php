@@ -29,6 +29,7 @@ Route::post('/logout', 'AuthController@logout');
 // -------------------------------------------------------------------------------
 // * - Users
 // -------------------------------------------------------------------------------
+Route::get('users/{id}/stats', 'User\UserController@stats')->middleware('jwt');
 Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']])->middleware('jwt');
 Route::resource('users.teams', 'User\UserTeamController', ['only' => ['index']])->middleware('jwt');
 Route::resource('users.orders', 'User\UserOrderController', ['only' => ['index']])->middleware('jwt');
@@ -36,6 +37,7 @@ Route::resource('users.orders', 'User\UserOrderController', ['only' => ['index']
 // -------------------------------------------------------------------------------
 // * - Teams
 // -------------------------------------------------------------------------------
+Route::get('teams/{id}/stats', 'Team\TeamController@stats')->middleware('jwt');
 Route::resource('teams', 'Team\TeamController', ['except' => ['create', 'edit']])->middleware('jwt');
 Route::resource('teams.users', 'Team\TeamUserController', ['only' => ['index']])->middleware('jwt');
 

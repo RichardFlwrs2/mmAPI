@@ -6,6 +6,7 @@ use App\Order;
 use App\Role;
 use App\Team;
 use App\File;
+use App\Models\StatsData;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $table = 'users';
     protected $dates = ['deleted_at'];
+    protected $appends = ['stats'];
 
     protected $fillable = [
         'name', 'email', 'password', 'role_id', 'admin', 'verification_token', 'verified',
@@ -33,8 +35,18 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token', 'verification_token', 'verified', 'pivot',
     ];
 
-    // RELATIONS
 
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - APPENDS
+    // ----------------------------------------------------------------------------------------------------- //
+    public function getStatsAttribute()
+    {
+        return StatsData::getStatsOfUser($this);
+    }
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - RELATIONS
+    // ----------------------------------------------------------------------------------------------------- //
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -60,8 +72,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(File::class);
     }
 
-    // Mutators
-
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - Mutators
+    // ----------------------------------------------------------------------------------------------------- //
     public function setNameAttribute($valor)
     {
         $this->attributes['name'] = strtolower($valor);
