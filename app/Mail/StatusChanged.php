@@ -8,21 +8,31 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 use App\User;
+use App\Status;
+use App\Order;
 
 class StatusChanged extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $leader;
+    public $status;
+    public $order;
+    public $user_asigned;
+
+    public $title;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $leader, Status $status, Order $order)
     {
-        $this->user = $user;
+        $this->leader = $leader;
+        $this->status = $status;
+        $this->order = $order;
+        $this->user_asigned = $order->userAssigned()->first();
     }
 
     /**
@@ -32,7 +42,13 @@ class StatusChanged extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.statusReporter');
+        $title = $this->user_asigned->name . ' ha hecho un movimiento con una orden';
+
+        if ( $this->status->id == 2 ) $title = $this->user_asigned->name . ' ha empezado a llenar una requisición';
+
+        $this->title = $title;
+
+        return $this->markdown('emails.statusReporter')->subject($title);
         // return $this->view('view.name');
     }
 }

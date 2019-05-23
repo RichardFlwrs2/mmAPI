@@ -19,9 +19,11 @@ class OrderStatusController extends ApiController
         $team = $order->userAssigned->teams()->first();
         $leader = $team->user_leader()->first();
 
-        // dd($leader);
+        $value=\Config::get('globals.front_url');
 
-        Mail::to($leader)->send(new StatusChanged($leader));
+        dd( $value );
+
+        Mail::to($leader)->send(new StatusChanged($leader, $status, $order));
 
         $order->status_id = $status->id;
         $order->save();

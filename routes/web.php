@@ -12,6 +12,7 @@
  */
 
 Route::get('/', function () {
-    return view('welcome');
+    $url = \Config::get('globals.front_url');
+    return redirect( $url );
 });
 
