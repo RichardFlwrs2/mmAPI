@@ -21,6 +21,7 @@ class CreateRecordsTable extends Migration
             $table->integer('monto_total')->unsigned()->nullable();
             $table->string('temporal')->default('0');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('order_id')->references('id')->on('orders');
         });

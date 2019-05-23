@@ -14,8 +14,14 @@ class OrderStatusController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function update(Request $request, Order $order, Status $status)
     {
+        $team = $order->userAssigned->teams()->first();
+        $leader = $team->user_leader()->first();
+
+        // dd($leader);
+
         $order->status_id = $status->id;
         $order->save();
+
 
         return $this->showMessage('Estatus cambiado con éxito');
     }
