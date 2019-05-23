@@ -127,6 +127,9 @@ class TeamController extends ApiController
      */
     public function destroy(Team $team)
     {
+        // $team->owner_id = null;
+        // $team->users_members()->detach($team->users_members()->get()->values());
+        // $team->save();
         $team->delete();
         return $this->showOne($team);
     }

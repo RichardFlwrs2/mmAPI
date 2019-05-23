@@ -5,9 +5,12 @@ namespace App;
 use App\Order;
 use App\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Record extends Model
 {
+    use SoftDeletes;
+
     protected $hidden = [ 'deleted_at', ];
     protected $fillable = ['order_id', 'numero_cotizacion', 'monto_total', 'temporal'];
 

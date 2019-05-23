@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         $cantidadRecords = 20;
         $cantidadProductos = 60;
 
-        $cantidadTeams = 3;
+        $cantidadTeams = 10;
 
 
         $this->createAdmin();
