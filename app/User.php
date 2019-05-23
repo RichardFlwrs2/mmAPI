@@ -50,6 +50,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Team::class);
     }
 
+    public function team_leader()
+    {
+        return $this->belongsToMany(Team::class);
+    }
+
     public function avatar()
     {
         return $this->hasOne(File::class);

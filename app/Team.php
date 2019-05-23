@@ -12,8 +12,8 @@ class Team extends Model
     protected $fillable = ['name', 'owner_id'];
     protected $hidden = ['pivot'];
 
-    public function user_owner(){
-        return $this->hasMany(User::class);
+    public function user_leader(){
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function users_members(){
