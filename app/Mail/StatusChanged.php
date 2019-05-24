@@ -50,6 +50,7 @@ class StatusChanged extends Mailable
     {
         $title = $this->user_asigned->name . ' ha hecho un movimiento con una orden';
 
+        if ( $this->status->id == 1 ) $title = $this->user_asigned->name . ' ha creado una requisición';
         if ( $this->status->id == 2 ) $title = $this->user_asigned->name . ' ha empezado a llenar una requisición';
 
         $this->title = $title;

@@ -82,7 +82,7 @@ class UserController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function show(User $user)
     {
-        $user->append(['stats', 'teams']);
+        $user->append(['stats', 'teamsIndex']);
         return $this->showOne($user);
     }
 

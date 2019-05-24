@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\User;
+
 class AuthController extends Controller
 {
     public function __construct()
@@ -17,6 +19,11 @@ class AuthController extends Controller
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        $user = User::where('email', request('email'))->first();
+        $user->verification_token = $token;
+        $user->save();
+
         return $this->respondWithToken($token);
     }
     /**

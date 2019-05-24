@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Order;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StatusChanged;
 use App\Order;
 use App\Record;
 use App\Product;
@@ -96,8 +98,14 @@ class OrderController extends ApiController
 
 
         $orderData = Order::with(['last_record.products', 'status', 'client'])
-                        ->where('id', $order->id)
-                        ->firstOrFail();
+            ->where('id', $order->id)
+            ->firstOrFail();
+
+        $leader = $orderData->userAssigned->teams()->first()->user_leader;
+        $status = $orderData->status;
+
+        Mail::to($leader)->send(new StatusChanged($leader, $status, $orderData));
+
         return $this->showOne($orderData);
 
     }
