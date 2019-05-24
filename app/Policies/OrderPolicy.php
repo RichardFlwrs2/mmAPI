@@ -4,11 +4,13 @@ namespace App\Policies;
 
 use App\User;
 use App\Order;
+use App\Traits\AdminActions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class OrderPolicy
 {
-    use HandlesAuthorization;
+    // AdminActions: Permite que el admin pueda realizar cualquier metodo
+    use HandlesAuthorization, AdminActions;
 
     /**
      * Determine whether the user can view the order.
@@ -19,7 +21,8 @@ class OrderPolicy
      */
     public function view(User $user, Order $order)
     {
-        //
+        // dd($user);
+        return $user->id === $order->user_id;
     }
 
     /**
@@ -65,18 +68,6 @@ class OrderPolicy
      * @return mixed
      */
     public function restore(User $user, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the order.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Order  $order
-     * @return mixed
-     */
-    public function forceDelete(User $user, Order $order)
     {
         //
     }

@@ -3,15 +3,30 @@
 namespace App\Http\Controllers\Order;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\ApiController;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Mail;
+
+use App\Http\Controllers\ApiController;
 use App\Mail\StatusChanged;
+use App\Mail\PetitionToSend;
+use App\Mail\PetitionToFinish;
+use App\Mail\PetitionToDelete;
 use App\Order;
 use App\Record;
 use App\Product;
+use App\Role;
+
 
 class OrderController extends ApiController
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+        // $this->middleware('scope:read-general')->only('show');
+        $this->middleware('can:view,order')->only('show');
+    }
+
     // ---------------------------------------------------------------------------------
     /** --------------------------------------------------------------------------------
      * Display a listing of the resource.
@@ -39,7 +54,6 @@ class OrderController extends ApiController
         // * ------------------------------------------------ //
         $reglas = [
             // Order
-            'created_by' => 'required|numeric',
             'user_id' => 'required|numeric',
             'status_id' => 'required|numeric',
             'client_id' => 'required|numeric',
@@ -68,6 +82,12 @@ class OrderController extends ApiController
 
         $this->validate($request, $reglas);
 
+        $user = auth()->user();
+
+        if ($user->role_id === Role::COTIZADOR ) {
+            throw new AuthorizationException('Esta acción no te es permitida');
+        }
+
         // * ------------------------------------------------ //
         // * - Storing Data
         // * ------------------------------------------------ //
@@ -75,6 +95,7 @@ class OrderController extends ApiController
         // ----| Order |------->
         $order_campos = $request->all();
         unset($order_campos['record']);
+        $order_campos['created_by'] = $user->id;
 
         $order = Order::create($order_campos);
 
@@ -101,7 +122,7 @@ class OrderController extends ApiController
             ->where('id', $order->id)
             ->firstOrFail();
 
-        $leader = $orderData->userAssigned->teams()->first()->user_leader;
+        $leader = $orderData->team_belonged()->user_leader;
         $status = $orderData->status;
 
         Mail::to($leader)->send(new StatusChanged($leader, $status, $orderData));
@@ -180,6 +201,17 @@ class OrderController extends ApiController
 
         $this->validate($request, $reglas);
 
+        $user = auth()->user();
+
+        if ( $request['status_id'] === 4 && $user->role_id != Role::ADMIN && $user->role_id != Role::SUPER_ADMIN ) {
+            $leader = $order->team_belonged()->user_leader;
+            $status = $order->status;
+
+            Mail::to($leader)->send(new PetitionToSend($leader, $status, $order));
+            return $this->showMessage('No puedes enviar la requisicón, se le ha notificado a tu administrador una petición para esta acción', 403);
+
+        }
+
         // * ------------------------------------------------ //
         // * - Updating Data
         // * ------------------------------------------------ //
@@ -247,6 +279,8 @@ class OrderController extends ApiController
      */
     public function destroy(Order $order)
     {
+        $this->allowedAdminAction();
+
         $order->delete();
 
         return $this->showOne($order);

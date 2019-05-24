@@ -29,42 +29,42 @@ Route::post('/logout', 'AuthController@logout');
 // -------------------------------------------------------------------------------
 // * - Users
 // -------------------------------------------------------------------------------
-Route::get('users/{id}/stats', 'User\UserController@stats')->middleware('jwt');
-Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']])->middleware('jwt');
-Route::resource('users.teams', 'User\UserTeamController', ['only' => ['index']])->middleware('jwt');
-Route::resource('users.orders', 'User\UserOrderController', ['only' => ['index']])->middleware('jwt');
+Route::get('users/{id}/stats', 'User\UserController@stats');
+Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
+Route::resource('users.teams', 'User\UserTeamController', ['only' => ['index']]);
+Route::resource('users.orders', 'User\UserOrderController', ['only' => ['index']]);
 
 // -------------------------------------------------------------------------------
 // * - Teams
 // -------------------------------------------------------------------------------
-Route::get('teams/{id}/stats', 'Team\TeamController@stats')->middleware('jwt');
-Route::resource('teams', 'Team\TeamController', ['except' => ['create', 'edit']])->middleware('jwt');
-Route::resource('teams.users', 'Team\TeamUserController', ['only' => ['index']])->middleware('jwt');
+Route::get('teams/{id}/stats', 'Team\TeamController@stats');
+Route::resource('teams', 'Team\TeamController', ['except' => ['create', 'edit']]);
+Route::resource('teams.users', 'Team\TeamUserController', ['only' => ['index']]);
 
 // -------------------------------------------------------------------------------
 // * - Clients
 // -------------------------------------------------------------------------------
-Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']])->middleware('jwt');
-Route::resource('clients.contacts', 'Client\ClientContactController', ['only' => ['index']])->middleware('jwt');
+Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']]);
+Route::resource('clients.contacts', 'Client\ClientContactController', ['only' => ['index']]);
 
 // -------------------------------------------------------------------------------
 // * - Contacts
 // -------------------------------------------------------------------------------
-Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', 'store']])->middleware('jwt');
+Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', 'store']]);
 
 // -------------------------------------------------------------------------------
 // * - Orders
 // -------------------------------------------------------------------------------
-Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']])->middleware('jwt');
-Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']])->middleware('jwt');
-Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['update']])->middleware('jwt');
+Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
+Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']]);
+Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['update']]);
 
 // -------------------------------------------------------------------------------
 // * - Records
 // -------------------------------------------------------------------------------
-Route::resource('records', 'Record\RecordController', ['only' => ['show', 'store']])->middleware('jwt');
+Route::resource('records', 'Record\RecordController', ['only' => ['show', 'store']]);
 
 // -------------------------------------------------------------------------------
 // * - Products
 // -------------------------------------------------------------------------------
-Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']])->middleware('jwt');
+Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']]);

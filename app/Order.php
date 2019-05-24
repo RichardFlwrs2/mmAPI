@@ -30,6 +30,18 @@ class Order extends Model
     ];
     protected $hidden = [ 'deleted_at', ];
 
+    // ------------------------------------------------------- //
+    // - Functions
+    // ------------------------------------------------------- //
+    public function team_belonged()
+    {
+        return $this->userAssigned->teams()->first();
+    }
+
+    // ------------------------------------------------------- //
+    // * RELATIONS
+    // ------------------------------------------------------- //
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'created_by');
