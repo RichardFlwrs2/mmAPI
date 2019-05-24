@@ -23,6 +23,7 @@ class CreateOrdersTable extends Migration
             $table->string('numero_orden')->nullable();
             $table->integer('monto_total')->nullable();
             $table->timestamps();
+            $table->timestamp('sended_at')->nullable();
             $table->softDeletes();
 
             $table->foreign('created_by')->references('id')->on('users');

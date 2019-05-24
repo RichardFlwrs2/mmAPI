@@ -26,12 +26,9 @@ class OrderController extends ApiController
         $this->middleware('can:view,order')->only(['show', 'update']);
     }
 
-    // ---------------------------------------------------------------------------------
-    /** --------------------------------------------------------------------------------
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - I N D E X
+    // ----------------------------------------------------------------------------------------------------- //
     public function index()
     {
         $orders = Order::all();
@@ -39,13 +36,9 @@ class OrderController extends ApiController
         return $this->showAll($orders);
     }
 
-    // ---------------------------------------------------------------------------------
-    /** --------------------------------------------------------------------------------
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S T O R E
+    // ----------------------------------------------------------------------------------------------------- //
     public function store(Request $request)
     {
         // * ------------------------------------------------ //
@@ -130,13 +123,9 @@ class OrderController extends ApiController
 
     }
 
-    // ---------------------------------------------------------------------------------
-    /** --------------------------------------------------------------------------------
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S H O W
+    // ----------------------------------------------------------------------------------------------------- //
     public function show(Order $order)
     {
         $orderData = Order::with(['last_record.products', 'status', 'client'])
@@ -146,6 +135,10 @@ class OrderController extends ApiController
         return $this->showOne($orderData);
     }
 
+
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - P E T I T I O N
+    // ----------------------------------------------------------------------------------------------------- //
     public function petition( Request $request, $id)
     {
         $order = Order::where('id', $id)->firstOrFail();
@@ -155,7 +148,6 @@ class OrderController extends ApiController
         // * - Validating Data
         // * ------------------------------------------------ //
         $reglas = [
-            // Order
             'type_petition' => 'required',
         ];
 
@@ -192,14 +184,9 @@ class OrderController extends ApiController
     }
 
 
-    // ---------------------------------------------------------------------------------
-    /** --------------------------------------------------------------------------------
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - U P D A T E
+    // ----------------------------------------------------------------------------------------------------- //
     public function update(Request $request, Order $order)
     {
         // * ------------------------------------------------ //
@@ -207,21 +194,21 @@ class OrderController extends ApiController
         // * ------------------------------------------------ //
         $reglas = [
             // Order
-            'id' => 'required|numeric',
+            'id' => 'nullable',
             'created_by' => 'required|numeric',
             'user_id' => 'required|numeric',
             'status_id' => 'required|numeric',
             'client_id' => 'required|numeric',
             'folio' => 'present|max:250',
-            'numero_orden' => 'present|max:150|nullable',
-            'monto_total' => 'present|numeric|nullable',
+            'numero_orden' => 'nullable',
+            'monto_total' => 'nullable',
 
             // Record
             'record' => 'required',
             'record.id' => 'required|numeric',
             'record.order_id' => 'required|numeric',
-            'record.numero_cotizacion' => 'present|nullable',
-            'record.monto_total' => 'present|numeric|nullable',
+            'record.numero_cotizacion' => 'nullable',
+            'record.monto_total' => 'nullable',
 
             // Products
             'record.products' => 'present|array',
@@ -244,6 +231,9 @@ class OrderController extends ApiController
         ];
 
         $this->validate($request, $reglas);
+
+        if ( isset( $request['numero_orden'] ) ) unset($request['numero_orden']);
+        if ( isset( $request['monto_total'] ) ) unset($request['monto_total']);
 
         $user = auth()->user();
 
@@ -271,8 +261,12 @@ class OrderController extends ApiController
         // ----| Record |------->
         $record_campos = $request->all()['record'];
         unset($record_campos['products']);
+        if ( isset( $record_campos['numero_cotizacion'] ) ) unset($record_campos['numero_cotizacion']);
+        if ( isset( $record_campos['monto_total'] ) ) unset($record_campos['monto_total']);
 
         $record = Record::where('id', $record_campos['id'] )->firstOrFail();
+        if ( $record->order_id !== $order->id )return $this->errorResponse('Ha habido un error, por favor recargar la página', 400);
+
         $record->fill((array) $record_campos);
         $record->save();
 
@@ -285,6 +279,8 @@ class OrderController extends ApiController
             if ( isset( $product_value['id'] ) ) {
 
                 $product = Product::where('id', $product_value['id'] )->firstOrFail();
+                if ( $product->record_id !== $record->id )return $this->errorResponse('Ha habido un error, por favor recargar la página', 400);
+
                 $product->fill((array) $product_value);
                 $product->save();
 
@@ -315,12 +311,9 @@ class OrderController extends ApiController
         return $this->showOne($orderData);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - D E S T R O Y
+    // ----------------------------------------------------------------------------------------------------- //
     public function destroy(Order $order)
     {
         $this->allowedAdminAction();

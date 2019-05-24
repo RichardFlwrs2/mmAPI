@@ -14,7 +14,7 @@ class Order extends Model
 
     use SoftDeletes;
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'sended_at'];
     protected $appends = ['index_records'];
 
     protected $fillable = [
