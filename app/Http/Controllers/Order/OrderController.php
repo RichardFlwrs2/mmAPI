@@ -23,8 +23,7 @@ class OrderController extends ApiController
     public function __construct()
     {
         parent::__construct();
-        // $this->middleware('scope:read-general')->only('show');
-        $this->middleware('can:view,order')->only('show');
+        $this->middleware('can:view,order')->only(['show', 'update']);
     }
 
     // ---------------------------------------------------------------------------------
@@ -147,6 +146,51 @@ class OrderController extends ApiController
         return $this->showOne($orderData);
     }
 
+    public function petition( Request $request, $id)
+    {
+        $order = Order::where('id', $id)->firstOrFail();
+        $leader = $order->team_belonged()->user_leader;
+
+        // * ------------------------------------------------ //
+        // * - Validating Data
+        // * ------------------------------------------------ //
+        $reglas = [
+            // Order
+            'type_petition' => 'required',
+        ];
+
+        $this->validate($request, $reglas);
+
+        // if ( $order->userAssigned()->first()->esAdministrador() ) {
+        //     return $this->errorResponse('No puedes enviar peticiones si tu eres el admin', 400);
+        // }
+
+        // * ------------------------------------------------ //
+        // * - Sending Data
+        // * ------------------------------------------------ //
+        $leader = $order->team_belonged()->user_leader;
+        $status = $order->status;
+
+        switch ($request['type_petition']) {
+            case 'send':
+                Mail::to($leader)->send(new PetitionToSend($leader, $status, $order));
+                return $this->showMessage('Se ha hecho una peticion para enviar la requisición, espere a que el administrador lo autorize');
+
+            case 'finish':
+                Mail::to($leader)->send(new PetitionToFinish($leader, $status, $order));
+                return $this->showMessage('Se ha hecho una peticion para finalizar la requisición, espere a que el administrador lo autorize');
+
+            case 'delete':
+                Mail::to($leader)->send(new PetitionToDelete($leader, $status, $order));
+                return $this->showMessage('Se ha hecho una peticion para borrar la requisición, espere a que el administrador lo autorize');
+
+            default:
+                return $this->errorResponse('Tipo de peticion: ' . $request['type_petition'] . ' no es valido. Tipos válidos: send, finish, delete', 403);
+        }
+
+        return $this->showOne($order);
+    }
+
 
     // ---------------------------------------------------------------------------------
     /** --------------------------------------------------------------------------------
@@ -203,12 +247,12 @@ class OrderController extends ApiController
 
         $user = auth()->user();
 
-        if ( $request['status_id'] === 4 && $user->role_id != Role::ADMIN && $user->role_id != Role::SUPER_ADMIN ) {
+        if ( $request['status_id'] === 4 && !$user->esAdministrador() ) {
             $leader = $order->team_belonged()->user_leader;
             $status = $order->status;
 
             Mail::to($leader)->send(new PetitionToSend($leader, $status, $order));
-            return $this->showMessage('No puedes enviar la requisicón, se le ha notificado a tu administrador una petición para esta acción', 403);
+            return $this->errorResponse('No puedes enviar la requisicón, se le ha notificado a tu administrador una petición para esta acción', 403);
 
         }
 

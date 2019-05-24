@@ -55,6 +55,7 @@ Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', '
 // -------------------------------------------------------------------------------
 // * - Orders
 // -------------------------------------------------------------------------------
+Route::post('orders/{id}/petition', 'Order\OrderController@petition');
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
 Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']]);
 Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['update']]);

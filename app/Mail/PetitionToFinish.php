@@ -47,9 +47,9 @@ class PetitionToFinish extends Mailable
      */
     public function build()
     {
-        $title = $this->user_asigned->name . ' quiere enviar una requisición';
+        $title = $this->user_asigned->name . ' quiere finalizar una requisición';
         $this->title = $title;
 
-        return $this->markdown('emails.petitionToSend')->subject($title);
+        return $this->markdown('emails.petitionToFinish')->subject($title);
     }
 }
