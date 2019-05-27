@@ -56,7 +56,7 @@ Route::resource('contacts', 'Contact\ContactController', ['only' => ['update', '
 // * - Orders
 // -------------------------------------------------------------------------------
 Route::post('orders/{id}/petition', 'Order\OrderController@petition');
-Route::patch('orders/{id_order}/saveDataRecord/{id_record}', 'Order\OrderRecordController@saveDataRecord');
+Route::post('orders/{id_order}/saveDataRecord/{id_record}', 'Order\OrderRecordController@saveDataRecord');
 Route::resource('orders', 'Order\OrderController', ['except' => ['create', 'edit']]);
 Route::resource('orders.records', 'Order\OrderRecordController', ['only' => ['index', 'show']]);
 Route::resource('orders.status', 'Order\OrderStatusController', ['only' => ['update']]);
@@ -70,3 +70,8 @@ Route::resource('records', 'Record\RecordController', ['only' => ['show', 'store
 // * - Products
 // -------------------------------------------------------------------------------
 Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']]);
+
+// -------------------------------------------------------------------------------
+// * - Files
+// -------------------------------------------------------------------------------
+Route::get('files/{id}', 'File\FileController@getFile');

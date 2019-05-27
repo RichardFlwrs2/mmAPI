@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Order;
 
+use Validator;
 use App\Order;
 use App\Record;
+use App\File;
+use App\Type;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
@@ -56,18 +59,39 @@ class OrderRecordController extends ApiController
         // * ------------------------------------------------ //
         // * - Validating Data
         // * ------------------------------------------------ //
-        $reglas = [
+
+        $data = json_decode( $request->input('data') , true );
+        // $file = $request->file->store('pdf', 'local');
+
+        Validator::make($data, [
             'numero_cotizacion' => 'required',
             'monto_total' => 'required|numeric',
-        ];
+        ])->validate();
 
-        $this->validate($request, $reglas);
-        if ( $user->id !== $order->user_id )return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
-        if ( $record->order_id !== $order->id )return $this->errorResponse('Ese registro no pertenece a la orden especificada', 400);
+        if ( $user->id !== $order->user_id ) if ( !$user->esAdministrador() ) return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
+        if ( $record->order_id !== $order->id ) return $this->errorResponse('Ese registro no pertenece a la orden especificada', 400);
 
         // * ------------------------------------------------ //
         // * - Storing Data
         // * ------------------------------------------------ //
+
+        if ( isset( $request->file ) ) {
+
+            if ($request->file->getClientOriginalExtension() !== 'pdf') return $this->errorResponse('El archivo debe ser de tipo PDF', 400);
+
+            $fileName = $request->file->getClientOriginalName();
+            $filePath = $request->file->store('pdf', 'local');
+
+            $record_pdf = new File;
+            $record_pdf->name = $fileName;
+            $record_pdf->path = $filePath;
+            $record_pdf->type_id = Type::ARCHIVO_PDF;
+            $record_pdf->record_id = $record->id;
+            $record_pdf->save();
+
+        } else {
+            return $this->errorResponse('No se ha encontrado el archivo PDF, por favor adjunte uno', 400);
+        }
 
         $record->fill((array) $request->all());
         $record->save();

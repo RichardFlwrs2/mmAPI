@@ -18,14 +18,27 @@ class FileController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getFile($id)
     {
-        //
+        $file = File::where('id', $id)->firstOrFail();
+        $file_location = $file->path;
+        $file_name = $file->name;
+
+        // Check if file exists in app/storage/app/pdf/ folder
+        $file_path = storage_path() .'/app/'. $file_location;
+
+        if (file_exists($file_path))
+        {
+            // Send Download
+            return response()->download($file_path, $file_name, [
+                'Content-Length: '. filesize($file_path)
+            ]);
+        }
+        else
+        {
+            // Error
+            exit('Requested file does not exist on our server!');
+        }
     }
 
     /**
@@ -46,17 +59,6 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(File $file)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(File $file)
     {
         //
     }
