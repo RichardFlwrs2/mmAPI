@@ -89,10 +89,15 @@ $factory->define(Order::class, function (Faker $faker) {
 
 $factory->define(Record::class, function (Faker $faker) {
 
+    $order = Order::all()->random();
+    $hasMoreData = false;
+
+    if ( $order->status_id >= 4 ) $hasMoreData = true;
+
     return [
-        'order_id' => Order::all()->random()->id,
-        'numero_cotizacion' => $faker->unique()->numberBetween(1, 999999999),
-        'monto_total' => $faker->numberBetween(1, 999999999),
+        'order_id' => $order->id,
+        'numero_cotizacion' => $hasMoreData ? $faker->unique()->numberBetween(1, 999999999) : null,
+        'monto_total' => $hasMoreData ? $faker->numberBetween(1, 999999999) : null,
         'temporal' => '0',
     ];
 });
@@ -122,7 +127,7 @@ $factory->define(Product::class, function (Faker $faker) {
 
 $factory->define(Team::class, function (Faker $faker) {
 
-    $admins = User::where('admin', 'true' )->get();
+    $admins = User::where('admin', User::USUARIO_ADMINISTRADOR )->get();
 
     return [
         'name' => $faker->word,
@@ -134,16 +139,12 @@ $factory->define(Team::class, function (Faker $faker) {
 
 $factory->define(Field::class, function (Faker $faker) {
 
-    $client_id = Client::all()->random()->id;
-    $user_id = User::all()->random()->id;
-    $contact_id = Contact::all()->random()->id;
-
     return [
         'name' => $faker->word,
         'data' => $faker->word,
-        'client_id' => $attempt1 = $faker->randomElement([$client_id, null]),
-        'user_id' => $attempt2 = $attempt1 != null ? null : $faker->randomElement([$user_id, null]),
-        'contact_id' => $attempt2 == null && $attempt1 == null ? $contact_id : null,
+        'client_id' => null,
+        'user_id' => null,
+        'contact_id' => null,
     ];
 
 });

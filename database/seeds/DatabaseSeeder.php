@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
         DB::table('team_user')->truncate();
 
         $cantidadUsuarios = 9;
-        $cantidadClientes = 3;
-        $cantidadContactos = 9;
+        $cantidadClientes = 12;
+        $cantidadContactos = $cantidadClientes * 3;
         $cantidadFields = $cantidadClientes + $cantidadContactos + $cantidadUsuarios;
 
         $cantidadOrdenes = 15;
@@ -45,11 +45,31 @@ class DatabaseSeeder extends Seeder
         $this->createAdmin();
 
         factory(User::class, $cantidadUsuarios)->create();
-        factory(Client::class, $cantidadClientes)->create();
-        factory(Contact::class, $cantidadContactos)->create();
-        factory(Field::class, $cantidadFields)->create();
+        factory(Client::class, $cantidadClientes)->create()->each(
+			function ($client) {
+                factory(Field::class, mt_rand(0, 3))->create([
+                    'client_id' => $client->id,
+                ]);
+			}
+		);
 
-        factory(Order::class, $cantidadOrdenes)->create();
+        factory(Contact::class, $cantidadContactos)->create()->each(
+			function ($contact) {
+                factory(Field::class, mt_rand(0, 3))->create([
+                    'contact_id' => $contact->id,
+                ]);
+			}
+		);
+
+        factory(Order::class, $cantidadOrdenes)->create()->each(
+			function ($order) {
+                factory(Record::class, 1)->create([
+                    'order_id' => $order->id,
+                    'numero_cotizacion' => null,
+                    'monto_total' => null,
+                ]);
+			}
+		);
         factory(Record::class, $cantidadRecords)->create();
         factory(Product::class, $cantidadProductos)->create();
 

@@ -8,6 +8,8 @@ use App\Order;
 use App\Status;
 use Carbon\Carbon;
 
+use Illuminate\Support\Collection;
+
 class StatsData
 {
 
@@ -92,6 +94,45 @@ class StatsData
             'cots_vendidas_number' => $cots_vendidas_number,
         );
 
+    }
+
+    public static function getStatsOfAll() {
+        $from = Carbon::today()->startOfMonth();
+        $to = $from->copy()->endOfMonth();
+
+        $orders = Order::with(['last_record'])->whereBetween('created_at', [$from, $to])->get()->count();
+
+        $vendidas = Order::where('status_id', Status::APROBADA )
+                ->whereBetween('created_at', [$from, $to])
+                ->get()
+                ->count();
+
+        $cotizadas = Order::where('status_id', Status::ENVIADA )
+                ->whereBetween('created_at', [$from, $to])
+                ->get()
+                ->count() + $vendidas;
+
+        $general_stats = (object) [
+            'reqs' => $orders,
+            'cotizadas' => $cotizadas,
+            'vendidas' => $vendidas,
+        ];
+
+        $reqs_cotizadas_number = $general_stats->reqs != 0 ? ($general_stats->cotizadas * 100) / $general_stats->reqs : 0;
+        $cots_vendidas_number = $general_stats->cotizadas != 0 ? ($general_stats->vendidas * 100) / $general_stats->cotizadas : 0;
+
+        $reqs_cotizadas = number_format((float) $reqs_cotizadas_number  , 2, '.', '');
+        $cots_vendidas = number_format((float) $cots_vendidas_number  , 2, '.', '');
+
+        return array(
+            'reqs' => $general_stats->reqs,
+            'cotizadas' => $general_stats->cotizadas,
+            'vendidas' => $general_stats->vendidas,
+            'reqs_cotizadas' => $reqs_cotizadas.'%',
+            'reqs_cotizadas_number' => $reqs_cotizadas_number,
+            'cots_vendidas' => $cots_vendidas.'%',
+            'cots_vendidas_number' => $cots_vendidas_number,
+        );
     }
 
 }

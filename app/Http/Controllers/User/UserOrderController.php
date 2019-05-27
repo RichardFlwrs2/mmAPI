@@ -2,27 +2,73 @@
 
 namespace App\Http\Controllers\User;
 
-use App\User;
-use App\Order;
-use App\Status;
-
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Order;
+use App\Role;
+use App\Status;
+use App\User;
+use App\Models\StatsData;
+use Carbon\Carbon;
 
 class UserOrderController extends ApiController
 {
     // ----------------------------------------------------------------------------------------------------- //
     // ? - I N D E X
     // ----------------------------------------------------------------------------------------------------- //
-    public function index( User $user )
+    public function index(User $user)
     {
         $from = Carbon::today()->startOfMonth();
         $to = $from->copy()->endOfMonth();
 
         $user = $user->append('stats');
-        $orders = Order::where('user_id', $user->id )->with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
 
+        $user_stats = $user->stats;
+
+        if ($user->role_id == Role::COTIZADOR || $user->role_id == Role::VENDEDOR) {
+
+            $orders = Order::where('user_id', $user->id)->with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+
+        } else if ($user->role_id == Role::ADMIN) {
+            $team = $user->teams()->first();
+
+            $reqsAll = (object) [
+                'reqs' => [],
+                'cotizadas' => [],
+                'vendidas' => [],
+            ];
+
+            $team->users_members->each(function ($user, $key) use ($reqsAll) {
+                $user_orders = $user->orders;
+                $temp = $this->buildReqsData($user_orders);
+
+                foreach ($temp->reqs as $key => $value) array_push($reqsAll->reqs, $value);
+                foreach ($temp->cotizadas as $key => $value) array_push($reqsAll->cotizadas, $value);
+                foreach ($temp->vendidas as $key => $value) array_push($reqsAll->vendidas, $value);
+
+            });
+
+            $orders = Order::where('user_id', $user->id)->with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+
+        } else if ($user->role_id == Role::SUPER_ADMIN) {
+
+            $user_stats = StatsData::getStatsOfAll();
+            $orders = Order::with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+
+        }
+
+        if ( $user->role_id != Role::ADMIN ) $reqsAll = $this->buildReqsData($orders);
+
+        $data = array(
+            'user_stats' => $user_stats,
+            'reqs_abiertas' => $reqsAll->reqs,
+            'cotizadas_pre' => $reqsAll->cotizadas,
+            'vendidas' => $reqsAll->vendidas,
+        );
+
+        return response()->json($data, 200);
+    }
+
+    private function buildReqsData( $orders ) {
 
         $reqsAll = (object) [
             'reqs' => [],
@@ -31,20 +77,29 @@ class UserOrderController extends ApiController
         ];
 
         $orders->each(function ($value, $key) use ($reqsAll) {
-            if ($value->status_id == Status::NUEVA) array_push( $reqsAll->reqs , $value );
-            if ($value->status_id == Status::EN_PROCESOS) array_push( $reqsAll->reqs , $value );
-            if ($value->status_id == Status::PRECOTIZADA) array_push( $reqsAll->cotizadas , $value );
-            if ($value->status_id == Status::ENVIADA) array_push( $reqsAll->cotizadas , $value );
-            if ($value->status_id == Status::APROBADA) array_push( $reqsAll->vendidas , $value );
+            if ($value->status_id == Status::NUEVA) {
+                array_push($reqsAll->reqs, $value);
+            }
+
+            if ($value->status_id == Status::EN_PROCESOS) {
+                array_push($reqsAll->reqs, $value);
+            }
+
+            if ($value->status_id == Status::PRECOTIZADA) {
+                array_push($reqsAll->cotizadas, $value);
+            }
+
+            if ($value->status_id == Status::ENVIADA) {
+                array_push($reqsAll->cotizadas, $value);
+            }
+
+            if ($value->status_id == Status::APROBADA) {
+                array_push($reqsAll->vendidas, $value);
+            }
+
         });
 
-        $data = array(
-            'user_stats' => $user->stats,
-            'reqs_abiertas' => $reqsAll->reqs,
-            'cotizadas_pre' => $reqsAll->cotizadas,
-            'vendidas' => $reqsAll->vendidas,
-        );
+        return $reqsAll;
 
-        return response()->json($data, 200);
     }
 }
