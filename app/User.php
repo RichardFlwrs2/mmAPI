@@ -19,8 +19,8 @@ class User extends Authenticatable implements JWTSubject
     const USUARIO_VERIFICADO = '1';
     const USUARIO_NO_VERIFICADO = '0';
 
-    const USUARIO_ADMINISTRADOR = 'true';
-    const USUARIO_REGULAR = 'false';
+    const USUARIO_ADMINISTRADOR = true;
+    const USUARIO_REGULAR = false;
 
     protected $table = 'users';
     protected $dates = ['deleted_at'];

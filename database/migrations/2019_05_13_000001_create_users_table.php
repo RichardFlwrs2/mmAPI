@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('verified')->default(User::USUARIO_NO_VERIFICADO);
-            $table->string('admin')->default(User::USUARIO_REGULAR);
+            $table->boolean('admin')->default(User::USUARIO_REGULAR);
             $table->string('verification_token', 400)->nullable();
             $table->integer('role_id')->unsigned();
             $table->string('phone');
