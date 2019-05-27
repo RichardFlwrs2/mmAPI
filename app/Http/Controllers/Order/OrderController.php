@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Order;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\ApiController;
 use App\Mail\StatusChanged;
@@ -15,6 +17,9 @@ use App\Order;
 use App\Record;
 use App\Product;
 use App\Role;
+use App\File;
+use App\Type;
+
 
 
 class OrderController extends ApiController
@@ -70,6 +75,9 @@ class OrderController extends ApiController
             'record.products.*.condition_id' => 'required|numeric',
             'record.products.*.costo_u' => 'present|numeric|nullable',
             'record.products.*.costo_t' => 'present|numeric|nullable',
+            'record.products.*.files' => 'present|array',
+            'record.products.*.files.*.file_name' => 'max:250',
+            'record.products.*.files.*.file' => 'required_with:file_name',
         ];
 
         $this->validate($request, $reglas);
@@ -107,8 +115,27 @@ class OrderController extends ApiController
             $product_value['record_id'] = $record->id;
             $product = Product::create($product_value);
 
-        }
+            foreach ($product_value['files'] as $key => $file_value) {
+                // - The file data
+                $fileName_original = $file_value['file_name'];
+                $file_path =  $product->id . '/' . $product->id . '_' . $file_value['file_name'];
+                $content = base64_decode($file_value['file']);
 
+                // if ( Storage::disk('product_attachments')->exists($file_path)
+
+                // - Upload the decoded file/image
+                if( Storage::disk('product_attachments')->put($file_path, $content) ) {
+                    $product_file = new File;
+                    $product_file->name = $fileName_original;
+                    $product_file->path = $file_path;
+                    $product_file->type_id = Type::ARCHIVO_PRODUCT;
+                    $product_file->product_id = $product->id;
+                    $product_file->save();
+
+                } else dd( "Unable to save the file." );
+
+            }
+        }
 
         $orderData = Order::with(['last_record.products', 'status', 'client'])
             ->where('id', $order->id)
@@ -149,6 +176,7 @@ class OrderController extends ApiController
         // * ------------------------------------------------ //
         $reglas = [
             'type_petition' => 'required',
+            'motive' => Rule::requiredIf($request->all()['type_petition'] === 'delete'),
         ];
 
         $this->validate($request, $reglas);
@@ -173,7 +201,8 @@ class OrderController extends ApiController
                 return $this->showMessage('Se ha hecho una peticion para finalizar la requisición, espere a que el administrador lo autorize');
 
             case 'delete':
-                Mail::to($leader)->send(new PetitionToDelete($leader, $status, $order));
+                $motive = $request->all()['motive'];
+                Mail::to($leader)->send(new PetitionToDelete($leader, $status, $order, $motive));
                 return $this->showMessage('Se ha hecho una peticion para borrar la requisición, espere a que el administrador lo autorize');
 
             default:

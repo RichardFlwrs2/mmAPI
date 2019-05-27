@@ -74,4 +74,5 @@ Route::resource('products', 'Product\ProductController', ['except' => ['create',
 // -------------------------------------------------------------------------------
 // * - Files
 // -------------------------------------------------------------------------------
-Route::get('files/{id}', 'File\FileController@getFile');
+Route::get('files/{id}/{type}', 'File\FileController@getFile');
+Route::resource('files', 'File\FileController', ['only' => ['update', 'store']]);

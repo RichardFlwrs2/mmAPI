@@ -13,6 +13,7 @@ class Type extends Model
     const ARCHIVO_AVATAR = 8;
     const ARCHIVO_IMAGE = 9;
     const ARCHIVO_PDF = 10;
+    const ARCHIVO_PRODUCT = 11;
 
     public function products(){
         return $this->hasMany(Product::class);

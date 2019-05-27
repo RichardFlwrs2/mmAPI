@@ -46,6 +46,7 @@ class CreateTypesTable extends Migration
             ['name' => 'avatar', 'description' => 'Archivo tipo: avatar'],
             ['name' => 'image', 'description' => 'Archivo tipo: image'],
             ['name' => 'pdf', 'description' => 'Archivo tipo: pdf'],
+            ['name' => 'product', 'description' => 'Archivo tipo: producto'],
         ]);
 
     }

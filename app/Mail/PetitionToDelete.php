@@ -21,6 +21,7 @@ class PetitionToDelete extends Mailable
     public $status;
     public $order;
     public $user_asigned;
+    public $motive;
 
     public $title;
 
@@ -29,11 +30,12 @@ class PetitionToDelete extends Mailable
      *
      * @return void
      */
-    public function __construct(User $leader, Status $status, Order $order)
+    public function __construct(User $leader, Status $status, Order $order, $motive)
     {
         $this->url = \Config::get('globals.front_url');
         $this->url = $this->url.'/orders/'. $order->id;
 
+        $this->motive = $motive;
         $this->leader = $leader;
         $this->status = $status;
         $this->order = $order;
@@ -47,7 +49,7 @@ class PetitionToDelete extends Mailable
      */
     public function build()
     {
-        $title = $this->user_asigned->name . ' quiere finalizar una requisición';
+        $title = $this->user_asigned->name . ' quiere borrar una requisición';
         $this->title = $title;
 
         return $this->markdown('emails.petitionToDelete')->subject($title);

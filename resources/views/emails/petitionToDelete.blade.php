@@ -3,6 +3,9 @@
 
 <p> El usuario {{ $user_asigned->name }} hace una petición para <b> borrar </b> la requisición </p>
 
+<b>Motivo:</b>
+<p> {{ $motive }} </p>
+
 @component('mail::button', ['url' => $url ])
     Ir al detalle de la orden
 @endcomponent

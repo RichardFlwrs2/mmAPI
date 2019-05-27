@@ -4,9 +4,9 @@ namespace App\Http\Controllers\File;
 
 use App\File;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 
-class FileController extends Controller
+class FileController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -18,14 +18,27 @@ class FileController extends Controller
         //
     }
 
-    public function getFile($id)
+    public function getFile($id, $type)
     {
         $file = File::where('id', $id)->firstOrFail();
         $file_location = $file->path;
         $file_name = $file->name;
 
-        // Check if file exists in app/storage/app/pdf/ folder
-        $file_path = storage_path() .'/app/'. $file_location;
+        // Check if file exists in 'app/storage/app/pdf/' folder
+        $file_path = null;
+
+        switch ( $type ) {
+            case 'pdf':
+                $file_path = storage_path() .'/app/'. $file_location;
+                break;
+
+            case 'product':
+                $file_path = storage_path() .'/app/products/'. $file_location;
+                break;
+
+            default:
+                return $this->errorResponse('Tipo de peticion: ' . $request['type_petition'] . ' no es valido. Tipos válidos: pdf, product', 403);
+        }
 
         if (file_exists($file_path))
         {
@@ -37,7 +50,7 @@ class FileController extends Controller
         else
         {
             // Error
-            exit('Requested file does not exist on our server!');
+            return $this->errorResponse('Requested file does not exist on our server!', 404);
         }
     }
 
@@ -72,7 +85,7 @@ class FileController extends Controller
      */
     public function update(Request $request, File $file)
     {
-        //
+        return $this->showOne( $file );
     }
 
     /**
