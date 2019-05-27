@@ -73,7 +73,12 @@ class Order extends Model
 
     public function last_record()
     {
-        return $this->hasMany(Record::class)->latest()->take(1);
+        return $this->hasOne(Record::class)->latest()->take(1);
+    }
+
+    public function getLastRecordsAttribute()
+    {
+        return $this->records;
     }
 
     public function getIndexRecordsAttribute()
