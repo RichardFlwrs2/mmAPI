@@ -63,10 +63,12 @@ class DatabaseSeeder extends Seeder
 
         factory(Order::class, $cantidadOrdenes)->create()->each(
 			function ($order) {
+                $hasMoreData = false;
+                if ( $order->status_id >= 4 ) $hasMoreData = true;
                 factory(Record::class, 1)->create([
                     'order_id' => $order->id,
-                    'numero_cotizacion' => null,
-                    'monto_total' => null,
+                    'numero_cotizacion' => $hasMoreData ? 10101 + $order->id  : null,
+                    'monto_total' => $hasMoreData ? 11101 : null,
                 ]);
 			}
 		);

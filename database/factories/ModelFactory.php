@@ -76,22 +76,27 @@ $factory->define(Contact::class, function (Faker $faker) {
 
 $factory->define(Order::class, function (Faker $faker) {
 
+    $status = $faker->randomElement([1, 2, 3, 4, 5]);
+
+    $hasMoreData = false;
+    if ( $status >= 4 ) $hasMoreData = true;
+
     return [
         'created_by' => User::all()->random()->id,
         'user_id' => User::all()->random()->id,
-        'status_id' => $faker->randomElement([1, 2, 3, 4, 5]),
+        'status_id' => $status,
         'client_id' => $faker->randomElement([1, 2, 3]),
         'folio' => str_random(5),
-        'numero_orden' => $faker->unique()->numberBetween(1, 999999999),
-        'monto_total' => $faker->numberBetween(1, 999999999),
+        'numero_orden' => $hasMoreData ? $faker->unique()->numberBetween(1, 999999999) : null,
+        'monto_total' => $hasMoreData ? $faker->numberBetween(1, 999999999) : null,
     ];
 });
 
 $factory->define(Record::class, function (Faker $faker) {
 
     $order = Order::all()->random();
-    $hasMoreData = false;
 
+    $hasMoreData = false;
     if ( $order->status_id >= 4 ) $hasMoreData = true;
 
     return [
