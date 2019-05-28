@@ -19,16 +19,28 @@ class UserOrderController extends ApiController
     {
         $from = Carbon::today()->startOfMonth();
         $to = $from->copy()->endOfMonth();
+        $appends = ['lastest_record', 'client_name', 'created_by_name', 'cotizador_name'];
 
         $user = $user->append('stats');
 
         $user_stats = $user->stats;
 
+        // ---------------------------------------------------------- //
+        // - Normal, solo obtiene los datos propios
+        // ---------------------------------------------------------- //
         if ($user->role_id == Role::COTIZADOR || $user->role_id == Role::VENDEDOR) {
 
-            $orders = Order::where('user_id', $user->id)->with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+            $orders = Order::where('user_id', $user->id)->whereBetween('created_at', [$from, $to])->get()
+                ->each(function ( $value ) use($appends) {
+                    $value->append($appends);
+                });
 
-        } else if ($user->role_id == Role::ADMIN) {
+        }
+
+        // ---------------------------------------------------------- //
+        // - Admin Leader, obtiene los datos de todo el equipo
+        // ---------------------------------------------------------- //
+        else if ($user->role_id == Role::ADMIN) {
             $team = $user->teams()->first();
 
             $reqsAll = (object) [
@@ -47,12 +59,25 @@ class UserOrderController extends ApiController
 
             });
 
-            $orders = Order::where('user_id', $user->id)->with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+            $orders = Order::where('user_id', $user->id)
+                ->whereBetween('created_at', [$from, $to])
+                ->get()
+                ->each(function ( $value ) use($appends) {
+                    $value->append($appends);
+                });
 
-        } else if ($user->role_id == Role::SUPER_ADMIN) {
+        }
+
+        // ---------------------------------------------------------- //
+        // - Super Admin, obtiene los datos de todo
+        // ---------------------------------------------------------- //
+        else if ($user->role_id == Role::SUPER_ADMIN) {
 
             $user_stats = StatsData::getStatsOfAll();
-            $orders = Order::with(['last_record'])->whereBetween('created_at', [$from, $to])->get();
+            $orders = Order::whereBetween('created_at', [$from, $to])->get()->each(function ( $value ) use($appends) {
+                $value->append($appends);
+            });
+
 
         }
 

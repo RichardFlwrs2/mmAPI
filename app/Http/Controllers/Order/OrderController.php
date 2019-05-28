@@ -137,7 +137,7 @@ class OrderController extends ApiController
             }
         }
 
-        $orderData = Order::with(['last_record.products', 'status', 'client'])
+        $orderData = Order::with(['last_record.products', 'client'])
             ->where('id', $order->id)
             ->firstOrFail();
 
@@ -155,7 +155,7 @@ class OrderController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function show(Order $order)
     {
-        $orderData = Order::with(['last_record.products', 'status', 'client'])
+        $orderData = Order::with(['last_record.products', 'client'])
                         ->where('id', $order->id)
                         ->firstOrFail();
 
@@ -334,7 +334,7 @@ class OrderController extends ApiController
 
 
 
-        $orderData = Order::with(['last_record.products', 'status', 'client'])
+        $orderData = Order::with(['last_record.products', 'client'])
                         ->where('id', $order->id)
                         ->firstOrFail();
         return $this->showOne($orderData);

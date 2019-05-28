@@ -8,6 +8,7 @@ use App\Record;
 use App\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -15,7 +16,7 @@ class Order extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at', 'sended_at'];
-    protected $appends = ['index_records'];
+    protected $appends = ['index_records', 'status_name'];
 
     protected $fillable = [
         'created_by',
@@ -76,9 +77,35 @@ class Order extends Model
         return $this->hasOne(Record::class)->latest()->take(1);
     }
 
-    public function getLastRecordsAttribute()
+    // ------------------------------------------------------- //
+    // - Appends
+    // ------------------------------------------------------- //
+    public function getLastestRecordAttribute()
     {
-        return $this->records;
+        $record = DB::table('records')->where('order_id', $this->id)->latest()->take(1)->first();
+        return $record;
+    }
+
+    public function getStatusNameAttribute()
+    {
+        return $this->status()->first()->name;
+    }
+
+    public function getClientNameAttribute()
+    {
+        // $client = DB::table('clients')->where('id', $this->client_id)->first();
+        // return $client->name;
+        return $this->client()->first()->name;
+    }
+
+    public function getCreatedByNameAttribute()
+    {
+        return $this->owner()->first()->name;
+    }
+
+    public function getCotizadorNameAttribute()
+    {
+        return $this->userAssigned()->first()->name;
     }
 
     public function getIndexRecordsAttribute()

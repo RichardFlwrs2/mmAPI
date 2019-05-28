@@ -27,8 +27,9 @@ class Team extends Model
 
     public function getLeaderNameAttribute()
     {
-        $user_name = DB::table('users')->where('id', $this->owner_id)->first();
-        return $user_name->name;
+        return $this->user_leader()->first()->name;
+        // $user = DB::table('users')->where('id', $this->owner_id)->first();
+        // return $user_name->name;
     }
 
     // ----------------------------------------------------------------------------------------------------- //
