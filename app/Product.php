@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Record;
+use App\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -31,5 +32,10 @@ class Product extends Model
     public function record()
     {
         return $this->belongsTo(Record::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 }

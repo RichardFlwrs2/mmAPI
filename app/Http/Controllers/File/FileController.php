@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\File;
 
-use Validator;
-
-use App\File;
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
+use Validator;
+
+use App\Type;
+use App\File;
+use App\Product;
+use App\User;
+
 class FileController extends ApiController
 {
-
     // ----------------------------------------------------------------------------------------------------- //
     // ? - GET | DOWNLOAD FILE
     // ----------------------------------------------------------------------------------------------------- //
@@ -56,14 +58,50 @@ class FileController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function store(Request $request)
     {
-        $data = json_decode( $request->input('data') , true );
-        // $file = $request->file->store('pdf', 'local');
 
-        Validator::make($data, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'role_id' => 'required|numeric',
-        ])->validate();
+
+        $reglas = [
+            'type' => 'required|max:100',
+            'id' => 'required|numeric',
+            'file' => 'required|file',
+        ];
+
+        $this->validate($request, $reglas);
+
+        $id = $request['id'];
+
+        $entity = null;
+        $filePath = null;
+        $type_file = null;
+        $fileName = $request->file->getClientOriginalName();
+
+
+        switch ( $request['type'] ) {
+            // case 'user':
+            //     break;
+
+            case 'product':
+                $entity = Product::where('id', $id )->firstOrFail();
+                $files_quantity = $entity->files()->count();
+
+                if ( $files_quantity >= 3 ) return $this->errorResponse('El producto contiene ya 3 archivos adjuntos, debe borrar alguno para agregar otro', 403);
+
+                $filePath = $request->file->store($entity->id, 'product_attachments');
+                $type_file = Type::ARCHIVO_PRODUCT;
+                break;
+
+            default:
+                return $this->errorResponse('Tipo de peticion: ' . $request['type'] . ' no es valido. Tipos válidos: product', 403);
+        }
+
+        $new_file = new File;
+        $new_file->name = $fileName;
+        $new_file->path = $filePath;
+        $new_file->type_id = $type_file;
+        if ( $request['type'] === 'product' ) $new_file->product_id = $id;
+        $new_file->save();
+
+        return $this->showOne( $new_file );
     }
 
 

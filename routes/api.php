@@ -70,6 +70,7 @@ Route::resource('records', 'Record\RecordController', ['only' => ['show', 'store
 // * - Products
 // -------------------------------------------------------------------------------
 Route::resource('products', 'Product\ProductController', ['except' => ['create', 'edit']]);
+Route::resource('products.files', 'Product\ProductFileController', ['only' => ['store', 'destroy', 'index']]);
 
 // -------------------------------------------------------------------------------
 // * - Files
