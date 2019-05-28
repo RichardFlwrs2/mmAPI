@@ -23,8 +23,10 @@ class AuthController extends Controller
         $user = User::where('email', request('email'))->first();
         $user->verification_token = $token;
         $user->save();
+        $user->admin = $user->admin === 1 ? true : false;
+        $user->append('role_name');
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $user);
     }
     /**
      * Get the authenticated User.
@@ -65,14 +67,14 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $user)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             // 'expires_in' => auth()->factory()->getTTL() * 60,
             'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'user' => auth()->user(),
+            'user' => $user,
         ]);
     }
 }

@@ -44,6 +44,11 @@ class User extends Authenticatable implements JWTSubject
         return StatsData::getStatsOfUser($this);
     }
 
+    public function getRoleNameAttribute()
+    {
+        return $this->role()->first()->name;
+    }
+
     public function getTeamsIndexAttribute()
     {
         return $this->teams()->pluck('name' , 'id');

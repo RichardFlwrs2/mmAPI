@@ -31,9 +31,7 @@ class UserOrderController extends ApiController
         if ($user->role_id == Role::COTIZADOR || $user->role_id == Role::VENDEDOR) {
 
             $orders = Order::where('user_id', $user->id)->whereBetween('created_at', [$from, $to])->get()
-                ->each(function ( $value ) use($appends) {
-                    $value->append($appends);
-                });
+                ->each->append($appends);
 
         }
 
@@ -62,9 +60,7 @@ class UserOrderController extends ApiController
             $orders = Order::where('user_id', $user->id)
                 ->whereBetween('created_at', [$from, $to])
                 ->get()
-                ->each(function ( $value ) use($appends) {
-                    $value->append($appends);
-                });
+                ->each->append($appends);
 
         }
 
@@ -74,10 +70,7 @@ class UserOrderController extends ApiController
         else if ($user->role_id == Role::SUPER_ADMIN) {
 
             $user_stats = StatsData::getStatsOfAll();
-            $orders = Order::whereBetween('created_at', [$from, $to])->get()->each(function ( $value ) use($appends) {
-                $value->append($appends);
-            });
-
+            $orders = Order::whereBetween('created_at', [$from, $to])->get()->each->append($appends);
 
         }
 
