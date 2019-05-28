@@ -18,6 +18,11 @@ class StatsData
         $from = Carbon::today()->startOfMonth();
         $to = $from->copy()->endOfMonth();
 
+        $valor_total_vendido = $user->append('valor_total_vendido')->valor_total_vendido;
+        $valor_total_cotizado = $user->append('valor_total_cotizado')->valor_total_cotizado;
+
+        // dd($valor_total_vendido);
+
         $reqs = $user->orders()->count();
         $vendidas = $user->orders()
             ->where('status_id', Status::APROBADA )
@@ -44,6 +49,8 @@ class StatsData
             'reqs_cotizadas_number' => $reqs_cotizadas_number,
             'cots_vendidas' => $cots_vendidas.'%',
             'cots_vendidas_number' => $cots_vendidas_number,
+            'valor_total_cotizado' => $valor_total_cotizado,
+            'valor_total_vendido' => $valor_total_vendido,
         );
     }
 

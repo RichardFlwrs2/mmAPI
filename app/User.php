@@ -54,6 +54,33 @@ class User extends Authenticatable implements JWTSubject
         return $this->teams()->pluck('name' , 'id');
     }
 
+    // VALOR COTIZADO
+    public function getValorTotalCotizadoAttribute()
+    {
+        $data = (object) [ 'value' => 0 ];
+
+        $this->orders()->get()->each(function ( Order $order) use($data) {
+
+            $order->records()->get()->each(function ( $record ) use($data) {
+
+                $data->value = $data->value + $record->monto_total;
+
+            });
+        });
+        return $data->value;
+    }
+
+    // VALOR VENDIDO
+    public function getValorTotalVendidoAttribute()
+    {
+        $data = (object) [ 'value' => 0 ];
+
+        $this->orders()->get()->each(function ( Order $order) use($data) {
+            $data->value = $data->value + $order->monto_total;
+        });
+        return $data->value;
+    }
+
     // ----------------------------------------------------------------------------------------------------- //
     // ? - RELATIONS
     // ----------------------------------------------------------------------------------------------------- //
