@@ -6,6 +6,7 @@ use App\User;
 use App\Models\StatsData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Team extends Model
 {
@@ -22,6 +23,12 @@ class Team extends Model
     public function getStatsAttribute()
     {
         return StatsData::getStatsOfTeam($this);
+    }
+
+    public function getLeaderNameAttribute()
+    {
+        $user_name = DB::table('users')->where('id', $this->owner_id)->first();
+        return $user_name->name;
     }
 
     // ----------------------------------------------------------------------------------------------------- //

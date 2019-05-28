@@ -16,7 +16,10 @@ class TeamController extends ApiController
      */
     public function index()
     {
-        $teams = Team::all();
+        $teams = Team::all()->each(function ($value, $key) {
+            $value->append(['leader_name']);
+        });
+
 
         return $this->showAll($teams);
     }
