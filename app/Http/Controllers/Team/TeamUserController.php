@@ -15,7 +15,7 @@ class TeamUserController extends ApiController
      */
     public function index( Team $team )
     {
-        $users = $team->users_members;
+        $users = $team->users_members->each->append('stats');
 
         return $this->showAll($users);
     }

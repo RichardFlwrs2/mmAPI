@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers\File;
 
+use Validator;
+
 use App\File;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
 class FileController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - GET | DOWNLOAD FILE
+    // ----------------------------------------------------------------------------------------------------- //
     public function getFile($id, $type)
     {
         $file = File::where('id', $id)->firstOrFail();
@@ -54,48 +51,28 @@ class FileController extends ApiController
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - S T O R E
+    // ----------------------------------------------------------------------------------------------------- //
     public function store(Request $request)
     {
-        //
+        $data = json_decode( $request->input('data') , true );
+        // $file = $request->file->store('pdf', 'local');
+
+        Validator::make($data, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'role_id' => 'required|numeric',
+        ])->validate();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function show(File $file)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
+    // ----------------------------------------------------------------------------------------------------- //
+    // ? - U P D A T E
+    // ----------------------------------------------------------------------------------------------------- //
     public function update(Request $request, File $file)
     {
         return $this->showOne( $file );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\File  $file
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(File $file)
-    {
-        //
-    }
 }
