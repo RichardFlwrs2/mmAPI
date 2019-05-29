@@ -19,7 +19,7 @@ class ApiController extends Controller
     protected function allowedAdminAction()
     {
 	    if (Gate::denies('admin-action')) {
-            throw new AuthorizationException('Esta acción no te es permitida');
+            throw new AuthorizationException('Esta acción no te es permitida, ponte en contacto con tu administrador');
         }
     }
 

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Order;
 use App\Product;
+use App\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,5 +31,10 @@ class Record extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function pdf_file()
+    {
+        return $this->hasOne(File::class);
     }
 }
