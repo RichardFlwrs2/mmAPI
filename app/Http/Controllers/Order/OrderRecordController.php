@@ -34,18 +34,29 @@ class OrderRecordController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function show(Order $order, Record $record)
     {
-        $orderData = Order::with([
-            'records' => function ($query) use($record) {
-                $query->where('id', '=', $record->id)->with(['products']);
-            },
-            'status',
-            'client'
-        ])
-        ->where('id', $order->id)
-        ->firstOrFail();
+        // $orderData = Order::with([
+        //     'records' => function ($query) use($record) {
+        //         $query->where('id', '=', $record->id)->with(['products']);
+        //     },
+        //     'status',
+        //     'client'
+        // ])
+        // ->where('id', $order->id)
+        // ->firstOrFail();
 
-        return $this->showOne($orderData);
+        $cliente = $order->client()->first();
+        $record = $record->with('products')->first();
+        // $products = $record->products()->get();
+
+        $data = array(
+            'order' => $order,
+            'record' => $record,
+            'cliente' => $cliente,
+        );
+
+        return response()->json($data, 200);
     }
+
 
     // ----------------------------------------------------------------------------------------------------- //
     // ? - SAVE BEFORE SENDING DATA BY ADMIN

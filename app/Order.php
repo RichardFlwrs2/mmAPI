@@ -110,6 +110,18 @@ class Order extends Model
 
     public function getIndexRecordsAttribute()
     {
-        return $this->records()->pluck('numero_cotizacion' , 'id');
+        $data = [];
+        $values = $this->records()->pluck('numero_cotizacion' , 'id');
+
+        foreach ($values as $key => $value) {
+            $index_record = (object) [
+                'id' => $key,
+                'numero_cotizacion' => $value,
+            ];
+
+            array_push( $data, $index_record );
+        }
+
+        return $data;
     }
 }
