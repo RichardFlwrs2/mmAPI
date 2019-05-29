@@ -90,20 +90,21 @@ class OrderRecordController extends ApiController
 
             if ($request->file->getClientOriginalExtension() !== 'pdf') return $this->errorResponse('El archivo debe ser de tipo PDF', 400);
 
-            if ( $record->has('pdf_file') ) {
 
-                $record_pdf = $record->pdf_file;
-                $record_pdf->name = $request->file->getClientOriginalName();
-                $record_pdf->path = $request->file->store('pdf/' . $order->id , 'local');
-                $record_pdf->save();
-
-            } else {
+            if ( $record->has('pdf_file')->get()->isEmpty() ) {
 
                 $record_pdf = new File;
                 $record_pdf->name = $request->file->getClientOriginalName();
                 $record_pdf->path = $request->file->store('pdf/' . $order->id , 'local');
                 $record_pdf->type_id = Type::ARCHIVO_PDF;
                 $record_pdf->record_id = $record->id;
+                $record_pdf->save();
+
+            } else {
+
+                $record_pdf = $record->pdf_file;
+                $record_pdf->name = $request->file->getClientOriginalName();
+                $record_pdf->path = $request->file->store('pdf/' . $order->id , 'local');
                 $record_pdf->save();
 
             }
