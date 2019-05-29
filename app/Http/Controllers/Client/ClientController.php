@@ -105,7 +105,7 @@ class ClientController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function show(Client $client)
     {
-        $clientData = Client::with(['fields'])->where('id', $client->id)->firstOrFail();
+        $clientData = Client::with(['fields'])->where('id', $client->id)->firstOrFail()->append('stats');
 
         // dd($client);
 

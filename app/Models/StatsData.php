@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 class StatsData
 {
 
-    public static function getStatsOfUser( User $user ) {
+    public static function getStatsOfUser( $user ) {
 
         $from = Carbon::today()->startOfMonth();
         $to = $from->copy()->endOfMonth();
