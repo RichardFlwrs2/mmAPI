@@ -10,6 +10,7 @@ use App\User;
 use App\Client;
 use App\Contact;
 use App\Field;
+use Carbon\Carbon;
 use Faker\Generator as Faker;
 
 /*
@@ -88,23 +89,75 @@ $factory->define(Order::class, function (Faker $faker) {
         'client_id' => $faker->randomElement([1, 2, 3]),
         'folio' => str_random(5),
         'numero_orden' => $hasMoreData ? $faker->unique()->numberBetween(1, 999999999) : null,
-        'monto_total' => $hasMoreData ? $faker->numberBetween(1, 999999999) : null,
+        'monto_total' => $hasMoreData ? $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 999999999) : null,
     ];
+});
+
+$factory->afterCreating(Order::class, function ($order, $faker) {
+
+    $hasMoreData = false;
+    if ( $order->status_id >= 4 ) {
+        $hasMoreData = true;
+        $now = $faker->dateTimeBetween($startDate = 'now', $endDate = 'now', $timezone = 'America/Monterrey');
+        $max = Carbon::now()->addHour(24);
+        $date = $faker->dateTimeBetween($startDate = 'now', $endDate = $max, $timezone = 'America/Monterrey');
+    }
+
+    $record = new Record;
+    $record->order_id = $order->id;
+    $record->numero_cotizacion = $hasMoreData ? $faker->unique()->numberBetween(1, 999999999) : null;
+    $record->monto_total = $hasMoreData ? $faker->numberBetween(1, 999999999) : null;
+    $record->sended_at = $hasMoreData ? $date : null;
+    $record->temporal = '0';
+    $record->save();
+
+    if ( $hasMoreData ) {
+
+        $timeFirst  = strtotime($record->created_at);
+        $timeSecond = strtotime($record->sended_at);
+        $differenceInSeconds = $timeSecond - $timeFirst;
+
+        $order->timer = $differenceInSeconds;
+        $order->save();
+
+    }
+
 });
 
 $factory->define(Record::class, function (Faker $faker) {
 
-    $order = Order::all()->random();
+    $order = Record::where('sended_at', '!=', null)->get()->random()->order;
 
     $hasMoreData = false;
-    if ( $order->status_id >= 4 ) $hasMoreData = true;
+    if ( $order->status_id >= 4 ) {
+        $hasMoreData = true;
+        $max = Carbon::now()->addHour(24);
+        $date = $faker->dateTimeBetween($startDate = 'now', $endDate = $max, $timezone = 'America/Monterrey');
+    }
 
     return [
         'order_id' => $order->id,
         'numero_cotizacion' => $hasMoreData ? $faker->unique()->numberBetween(1, 999999999) : null,
-        'monto_total' => $hasMoreData ? $faker->numberBetween(1, 999999999) : null,
+        'monto_total' => $hasMoreData ? $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 999999999) : null,
+        'sended_at' => $hasMoreData ? $date : null,
         'temporal' => '0',
     ];
+});
+
+$factory->afterCreating(Record::class, function ($record, $faker) {
+    $order = $record->order()->first();
+
+    if ( isset($record->sended_at) ) {
+
+        $timeFirst  = strtotime($record->created_at);
+        $timeSecond = strtotime($record->sended_at);
+        $differenceInSeconds = $timeSecond - $timeFirst;
+
+        $order->timer = $differenceInSeconds;
+        $order->save();
+
+    }
+
 });
 
 $factory->define(Product::class, function (Faker $faker) {

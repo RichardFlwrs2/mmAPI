@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $cantidadFields = $cantidadClientes + $cantidadContactos + $cantidadUsuarios;
 
         $cantidadOrdenes = 15;
-        $cantidadRecords = 20;
+        $cantidadRecords = 10;
         $cantidadProductos = 60;
 
         $cantidadTeams = 10;
@@ -61,17 +61,7 @@ class DatabaseSeeder extends Seeder
 			}
 		);
 
-        factory(Order::class, $cantidadOrdenes)->create()->each(
-			function ($order) {
-                $hasMoreData = false;
-                if ( $order->status_id >= 4 ) $hasMoreData = true;
-                factory(Record::class, 1)->create([
-                    'order_id' => $order->id,
-                    'numero_cotizacion' => $hasMoreData ? 10101 + $order->id  : null,
-                    'monto_total' => $hasMoreData ? 11101 : null,
-                ]);
-			}
-		);
+        factory(Order::class, $cantidadOrdenes)->create();
         factory(Record::class, $cantidadRecords)->create();
         factory(Product::class, $cantidadProductos)->create();
 

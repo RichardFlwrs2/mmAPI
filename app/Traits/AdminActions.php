@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 trait AdminActions
 {
 	public function before( $user, $ability ) {
-        if ( $user->esAdministrador() ) {
+        if ( $user->esAdmin() ) {
             return true;
         }
     }

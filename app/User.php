@@ -55,7 +55,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     // VALOR COTIZADO
-    public function getValorTotalCotizadoAttribute()
+    public function getValorTotalCotizadoAttribute() // valor_total_cotizado
     {
         $data = (object) [ 'value' => 0 ];
 
@@ -71,7 +71,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     // VALOR VENDIDO
-    public function getValorTotalVendidoAttribute()
+    public function getValorTotalVendidoAttribute() // valor_total_vendido
     {
         $data = (object) [ 'value' => 0 ];
 
@@ -136,7 +136,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->verified == User::USUARIO_VERIFICADO;
     }
 
-    public function esAdministrador()
+    public function esAdmin()
     {
         return $this->admin == User::USUARIO_ADMINISTRADOR;
     }

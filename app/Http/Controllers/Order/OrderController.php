@@ -170,7 +170,7 @@ class OrderController extends ApiController
 
         $this->validate($request, $reglas);
 
-        // if ( $order->userAssigned()->first()->esAdministrador() ) {
+        // if ( $order->userAssigned()->first()->esAdmin() ) {
         //     return $this->errorResponse('No puedes enviar peticiones si tu eres el admin', 400);
         // }
 
@@ -255,7 +255,7 @@ class OrderController extends ApiController
 
         $user = auth()->user();
 
-        if ( $request['status_id'] === 4 && !$user->esAdministrador() ) {
+        if ( $request['status_id'] === 4 && !$user->esAdmin() ) {
             $leader = $order->team_belonged()->user_leader;
             $status = $order->status;
 

@@ -80,7 +80,7 @@ class Order extends Model
     // ------------------------------------------------------- //
     // - Appends
     // ------------------------------------------------------- //
-    public function getLastestRecordAttribute()
+    public function getLastestRecordAttribute() // lastest_record
     {
         $record = DB::table('records')->where('order_id', $this->id)->latest()->take(1)->first();
         return $record;

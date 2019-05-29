@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('admin-action', function( $user ) {
             // dd($user);
-            return $user->esAdministrador();
+            return $user->esAdmin();
         });
 
         //

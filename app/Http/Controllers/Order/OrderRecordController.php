@@ -34,19 +34,9 @@ class OrderRecordController extends ApiController
     // ----------------------------------------------------------------------------------------------------- //
     public function show(Order $order, Record $record)
     {
-        // $orderData = Order::with([
-        //     'records' => function ($query) use($record) {
-        //         $query->where('id', '=', $record->id)->with(['products']);
-        //     },
-        //     'status',
-        //     'client'
-        // ])
-        // ->where('id', $order->id)
-        // ->firstOrFail();
 
         $cliente = $order->client()->first();
         $record = $record->with('products')->first();
-        // $products = $record->products()->get();
 
         $data = array(
             'order' => $order,
@@ -84,7 +74,7 @@ class OrderRecordController extends ApiController
             'monto_total' => 'required|numeric',
         ])->validate();
 
-        // if ( $user->id !== $order->user_id ) if ( !$user->esAdministrador() ) return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
+        // if ( $user->id !== $order->user_id ) if ( !$user->esAdmin() ) return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
         if ( $record->order_id !== $order->id ) return $this->errorResponse('Ese registro no pertenece a la orden especificada', 400);
 
         // * ------------------------------------------------ //
