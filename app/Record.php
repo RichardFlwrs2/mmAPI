@@ -18,6 +18,10 @@ class Record extends Model
     const RECORD_TEMPORAL = '1';
     const RECORD_NO_TEMPORAL = '0';
 
+    public function getTemporalAttribute($valor) {
+        return $valor === '0' ? false : true;
+    }
+
     public function order()
     {
         return $this->belongsTo(Order::class);

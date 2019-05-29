@@ -21,7 +21,7 @@ class CreateOrdersTable extends Migration
             $table->integer('client_id')->unsigned();
             $table->string('folio')->nullable();
             $table->string('numero_orden')->nullable();
-            $table->integer('monto_total')->nullable();
+            $table->decimal('monto_total', 13, 2)->unsigned()->nullable();
             $table->timestamps();
             $table->timestamp('sended_at')->nullable();
             $table->softDeletes();

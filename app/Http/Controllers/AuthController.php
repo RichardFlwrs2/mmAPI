@@ -23,7 +23,7 @@ class AuthController extends Controller
         $user = User::where('email', request('email'))->first();
         $user->verification_token = $token;
         $user->save();
-        $user->admin = $user->admin === 1 ? true : false;
+        // $user->admin = $user->admin === 1 ? true : false;
         $user->append('role_name');
 
         return $this->respondWithToken($token, $user);

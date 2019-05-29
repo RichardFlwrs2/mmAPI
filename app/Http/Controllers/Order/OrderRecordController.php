@@ -59,6 +59,11 @@ class OrderRecordController extends ApiController
         // * ------------------------------------------------ //
         // * - Validating Data
         // * ------------------------------------------------ //
+        $reglas = [
+            'data' => 'required',
+            'file' => 'required|file',
+        ];
+        $this->validate($request, $reglas);
 
         $data = json_decode( $request->input('data') , true );
         // $file = $request->file->store('pdf', 'local');
@@ -68,7 +73,7 @@ class OrderRecordController extends ApiController
             'monto_total' => 'required|numeric',
         ])->validate();
 
-        if ( $user->id !== $order->user_id ) if ( !$user->esAdministrador() ) return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
+        // if ( $user->id !== $order->user_id ) if ( !$user->esAdministrador() ) return $this->errorResponse('No posee permisos para ejecutar esta acción', 400);
         if ( $record->order_id !== $order->id ) return $this->errorResponse('Ese registro no pertenece a la orden especificada', 400);
 
         // * ------------------------------------------------ //
@@ -80,7 +85,7 @@ class OrderRecordController extends ApiController
             if ($request->file->getClientOriginalExtension() !== 'pdf') return $this->errorResponse('El archivo debe ser de tipo PDF', 400);
 
             $fileName = $request->file->getClientOriginalName();
-            $filePath = $request->file->store('pdf', 'local');
+            $filePath = $request->file->store('pdf/' . $order->id , 'local');
 
             $record_pdf = new File;
             $record_pdf->name = $fileName;
@@ -93,7 +98,7 @@ class OrderRecordController extends ApiController
             return $this->errorResponse('No se ha encontrado el archivo PDF, por favor adjunte uno', 400);
         }
 
-        $record->fill((array) $request->all());
+        $record->fill((array) $data);
         $record->save();
 
         return $this->showOne($record);

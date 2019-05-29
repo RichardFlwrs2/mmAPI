@@ -18,7 +18,7 @@ class CreateRecordsTable extends Migration
             $table->increments('id');
             $table->integer('order_id')->unsigned();
             $table->string('numero_cotizacion')->unique()->nullable();
-            $table->integer('monto_total')->unsigned()->nullable();
+            $table->decimal('monto_total', 13, 2)->unsigned()->nullable();
             $table->string('temporal')->default('0');
             $table->timestamps();
             $table->timestamp('sended_at')->nullable();

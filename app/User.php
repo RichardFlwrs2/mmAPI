@@ -112,6 +112,10 @@ class User extends Authenticatable implements JWTSubject
     // ----------------------------------------------------------------------------------------------------- //
     // ? - Mutators
     // ----------------------------------------------------------------------------------------------------- //
+    public function getAdminAttribute($valor) {
+        return $valor === 0 ? false : true;
+    }
+
     public function setNameAttribute($valor)
     {
         $this->attributes['name'] = strtolower($valor);
