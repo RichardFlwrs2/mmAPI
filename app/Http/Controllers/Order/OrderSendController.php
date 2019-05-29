@@ -45,8 +45,6 @@ class OrderSendController extends ApiController
             if ( isset( $contact->email ) ) Mail::to($contact)->send(new Requisicion($record) );
         }
 
-
-
         return $this->showMessage('Requisición enviada con éxito');
     }
 

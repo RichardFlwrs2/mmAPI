@@ -91,6 +91,7 @@ class OrderRecordController extends ApiController
             if ($request->file->getClientOriginalExtension() !== 'pdf') return $this->errorResponse('El archivo debe ser de tipo PDF', 400);
 
 
+            // Se crea un registro File si no tenia alguno o se sobre escribe
             if ( $record->has('pdf_file')->get()->isEmpty() ) {
 
                 $record_pdf = new File;
